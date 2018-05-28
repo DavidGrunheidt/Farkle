@@ -1,5 +1,4 @@
 package jogadas;
-import abstracts.Lance;
 import modelo.Dado;
 
 @SuppressWarnings("serial")
@@ -7,6 +6,8 @@ public class LanceRoll extends Lance {
 
 	protected Dado[] dados;
 	protected int roundTotal;
+	
+	public LanceRoll() {}
 
 	public void setDados(Dado[] dados) {
 		this.dados = dados;
@@ -20,8 +21,8 @@ public class LanceRoll extends Lance {
 		return this.roundTotal;
 	}
 
-	public void setRoundTotal(int numDadosSetAside) {
-		this.roundTotal = numDadosSetAside;
+	public void setRoundTotal(int roundTotal) {
+		this.roundTotal = roundTotal;
 	}
 
 }

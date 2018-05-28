@@ -1,11 +1,12 @@
 package jogadas;
-import abstracts.Lance;
 
 @SuppressWarnings("serial")
 public class LanceRoundFinalizado extends Lance {
 
 	protected int roundTotalDoUltimoPlayerDaVez;
 	protected int farkledType;
+	
+	public LanceRoundFinalizado() {}
 
 	public void setRoundTotalDoUltimoDaVez(int roundTotal) {
 		// TODO - implement LanceRoundFinalizado.setRoundTotalDoUltimoDaVez

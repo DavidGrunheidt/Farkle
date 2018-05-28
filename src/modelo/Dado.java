@@ -8,14 +8,20 @@ public class Dado implements Jogada {
 	protected boolean setAside;
 	protected int idDado;
 	protected boolean selecionado;
+	
+	public Dado(int idDado) {
+		valor = 0;
+		setAside = false;
+		selecionado = true;
+		this.idDado = idDado;
+	}
 
 	public boolean isSetAside() {
 		return this.setAside;
 	}
 
 	public void trocaSetAside() {
-		// TODO - implement Dado.trocaSetAside
-		throw new UnsupportedOperationException();
+		setAside = !setAside;
 	}
 
 	public int getValor() {
@@ -26,33 +32,26 @@ public class Dado implements Jogada {
 		this.valor = valor;
 	}
 
-	public void jogarDado(boolean somenteSeDadoLivre) {
-		// TODO - implement Dado.jogarDado
-		throw new UnsupportedOperationException();
-	}
-
 	public boolean isSelecionado() {
 		return this.selecionado;
 	}
 
 	public void trocaSelecionado() {
-		// TODO - implement Dado.trocaSelecionado
-		throw new UnsupportedOperationException();
+		selecionado = !selecionado;
 	}
 
 	public void liberarDado() {
-		// TODO - implement Dado.liberarDado
-		throw new UnsupportedOperationException();
+		if (setAside) {
+			setAside = false;
+		}
 	}
 
-	public int getId() {
-		// TODO - implement Dado.getId
-		throw new UnsupportedOperationException();
+	public int getIdDado() {
+		return idDado;
 	}
 
-	public void setId(int id) {
-		// TODO - implement Dado.setId
-		throw new UnsupportedOperationException();
+	public void setIdDado(int id) {
+		this.idDado = id;
 	}
 
 }

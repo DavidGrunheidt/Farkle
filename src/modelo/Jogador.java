@@ -2,19 +2,27 @@ package modelo;
 public class Jogador {
 
 	protected String nome;
-	protected int grandTotal = 0;
+	protected int grandTotal;
 	protected int contFarkled;
 	protected int id;
-	protected boolean minhaVez;
-	protected int pontuacaoRound;
+	protected int roundTotal;
+	
+	public Jogador(int id, String nome) {
+		this.nome = nome;
+		grandTotal = 0;
+		contFarkled = 0;
+		this.id = id;
+		roundTotal = 0;
+	}
 
 	public int getGrandTotal() {
 		return this.grandTotal;
 	}
 
-	public void bank() {
-		// TODO - implement Jogador.bank
-		throw new UnsupportedOperationException();
+	public int bank() {
+		grandTotal +=  roundTotal;
+		roundTotal = 0;
+		return grandTotal;
 	}
 
 	public int descontarThreeFarkled(int custoThreeFarkled) {
@@ -23,13 +31,16 @@ public class Jogador {
 	}
 
 	public boolean contabilizarFarkled() {
-		// TODO - implement Jogador.contabilizarFarkled
-		throw new UnsupportedOperationException();
+		boolean threeFarkled = false;
+		if (++contFarkled == 3) {
+			threeFarkled = true;
+			contFarkled = 0;
+		}
+		return threeFarkled;
 	}
 
 	public int getRoundTotal() {
-		// TODO - implement Jogador.getRoundTotal
-		throw new UnsupportedOperationException();
+		return this.roundTotal;
 	}
 
 	public void atualizarRoundTotal(int roundTotal) {
@@ -39,6 +50,10 @@ public class Jogador {
 
 	public String getNome() {
 		return this.nome;
+	}
+	
+	public int getId() {
+		return this.id;
 	}
 
 }

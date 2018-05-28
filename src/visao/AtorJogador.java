@@ -1,6 +1,6 @@
 package visao;
-import abstracts.Lance;
 import aplicacao.Controle;
+import jogadas.Lance;
 
 public class AtorJogador {
 

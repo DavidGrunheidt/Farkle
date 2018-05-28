@@ -1,12 +1,13 @@
 package jogadas;
-import abstracts.Lance;
 
 @SuppressWarnings("serial")
 public class LanceFinal extends Lance {
 
 	protected String winnerName;
 	protected int points;
-
+	
+	public LanceFinal() {}
+	
 	public void setWinnerName(String name) {
 		this.winnerName = name;
 	}

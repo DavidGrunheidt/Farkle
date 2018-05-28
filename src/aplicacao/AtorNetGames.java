@@ -1,8 +1,11 @@
 package aplicacao;
-import abstracts.Lance;
+import java.util.List;
+
 import br.ufsc.inf.leobr.cliente.Jogada;
 import br.ufsc.inf.leobr.cliente.OuvidorProxy;
 import br.ufsc.inf.leobr.cliente.Proxy;
+import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
+import jogadas.Lance;
 import visao.AtorJogador;
 
 @SuppressWarnings("serial")
@@ -21,9 +24,8 @@ public class AtorNetGames implements OuvidorProxy {
 		throw new UnsupportedOperationException();
 	}
 
-	public void iniciarPartida(int numJogadores) {
-		// TODO - implement AtorNetGames.iniciarPartida
-		throw new UnsupportedOperationException();
+	public void iniciarPartida(int numJogadores) throws NaoConectadoException {
+		proxy.iniciarPartida(numJogadores);
 	}
 
 	public void enviarJogada(Lance lance) {
@@ -36,9 +38,8 @@ public class AtorNetGames implements OuvidorProxy {
 		throw new UnsupportedOperationException();
 	}
 
-	public String getListaOrdenadaJogadores() {
-		// TODO - implement AtorNetGames.getListaOrdenadaJogadores
-		throw new UnsupportedOperationException();
+	public List<String> getListaOrdenadaJogadores() {
+		return proxy.obterNomeAdversarios();
 	}
 
 	public void finalizarPartida() {

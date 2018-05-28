@@ -1,7 +1,16 @@
 package aplicacao;
-import abstracts.Lance;
+
+import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
 import factorys.LanceFactory;
+import modelo.Dado;
+import modelo.Jogador;
 import modelo.Mesa;
+import jogadas.LanceRoll;
+import jogadas.LanceRoundFinalizado;
+import jogadas.LanceFinal;
+import jogadas.LanceVotarNivel;
+import jogadas.Lance;
+import jogadas.LanceDadoSelecionado;
 
 public class Controle {
 
@@ -10,11 +19,17 @@ public class Controle {
 	protected int meuID;
 	protected int idPlayerDaVez;
 	protected boolean conectado;
-	protected LanceFactory lanceFactory;
+	protected static LanceFactory lanceFactory;
+	
+	public Controle() {
+		
+	}
 
 	public void nivelSelecionado(int nivel) {
-		// TODO - implement Controle.nivelSelecionado
-		throw new UnsupportedOperationException();
+		mesaJogo.contabilizarVotoNivel(nivel);
+		Lance lance = lanceFactory.criarLance(0, meuID);
+		((LanceVotarNivel)lance).setLevelVoted(nivel);
+		rede.enviarJogada(lance);
 	}
 
 	public void clickSairJogo() {
@@ -22,9 +37,37 @@ public class Controle {
 		throw new UnsupportedOperationException();
 	}
 
-	public int clickRoll() {
-		// TODO - implement Controle.clickRoll
-		throw new UnsupportedOperationException();
+	public int[] clickRoll() {
+		int[] valores = mesaJogo.daVezDeuRoll().clone();
+		int farkledType = mesaJogo.VerificaFarkled(valores, meuID);
+		int tipo;
+		
+		if (farkledType == 0) {
+			tipo = 1;
+		} else {
+			valores[0] = farkledType;
+			tipo = 3;
+		}
+		
+		Lance lance = lanceFactory.criarLance(tipo, meuID);
+		int roundTotal = mesaJogo.getRoundTotal(meuID);
+		
+		if (farkledType == 0) {
+			Dado[] dados = mesaJogo.getDados().clone();
+			((LanceRoll)lance).setDados(dados);
+			((LanceRoll)lance).setRoundTotal(roundTotal);
+		} else {
+			if (farkledType < 0) {
+				if (farkledType == -2)
+					roundTotal = mesaJogo.getDescontoNoGrandTotal();
+				else
+					roundTotal = 0;
+			((LanceRoundFinalizado)lance).setRoundTotalDoUltimoDaVez(roundTotal);
+			((LanceRoundFinalizado)lance).setFarkledType(farkledType);
+			}
+		}
+		rede.enviarJogada(lance);
+		return valores;
 	}
 
 	public boolean clickConectar(String nome, String servidor) {
@@ -43,8 +86,31 @@ public class Controle {
 	}
 
 	public int clickBank() {
-		// TODO - implement Controle.clickBank
-		throw new UnsupportedOperationException();
+		int deuBank = 0;
+		int roundTotal = mesaJogo.tentarBank(meuID);
+		
+		if (roundTotal != 0) {
+			int tipo;
+			if (roundTotal > 0)
+				tipo = 3;
+			else
+				tipo = 4;
+			Lance lance = lanceFactory.criarLance(tipo, meuID);
+			
+			if (roundTotal > 0) {
+				deuBank = 1;
+				((LanceRoundFinalizado)lance).setRoundTotalDoUltimoDaVez(roundTotal);
+			} else {
+				deuBank = 2;
+				Jogador jogador = mesaJogo.getJogador(meuID);
+				int grandTotal = jogador.getGrandTotal();
+				String name = jogador.getNome();
+				((LanceFinal)lance).setPoints(grandTotal);
+				((LanceFinal)lance).setWinnerName(name);
+			}
+			rede.enviarJogada(lance);
+		}	
+		return deuBank;
 	}
 
 	public void mudaJogadorDaVez() {
@@ -53,23 +119,26 @@ public class Controle {
 	}
 
 	public void comecarPartida() {
-		// TODO - implement Controle.comecarPartida
-		throw new UnsupportedOperationException();
+		mesaJogo.comecarPartida();
 	}
 
 	public boolean verificaSeConectado() {
-		// TODO - implement Controle.verificaSeConectado
-		throw new UnsupportedOperationException();
+		return this.conectado;
 	}
 
 	public boolean iniciarPartida(int numJogadores) {
-		// TODO - implement Controle.iniciarPartida
-		throw new UnsupportedOperationException();
+		boolean iniciouPartida = true;
+		try {
+			rede.iniciarPartida(numJogadores);
+		} catch (NaoConectadoException e) {
+			iniciouPartida = false;
+			e.printStackTrace();
+		}
+		return iniciouPartida;
 	}
 
 	public void prepararParaVotos() {
-		// TODO - implement Controle.prepararParaVotos
-		throw new UnsupportedOperationException();
+		mesaJogo = new Mesa(rede.getListaOrdenadaJogadores());
 	}
 
 	public boolean verificarSeMinhaVez() {
@@ -83,13 +152,30 @@ public class Controle {
 	}
 
 	public void selecionarDado(int idDado) {
-		// TODO - implement Controle.selecionarDado
-		throw new UnsupportedOperationException();
+		mesaJogo.selecionarDado(idDado);
+		Lance lance = lanceFactory.criarLance(2, meuID);
+		((LanceDadoSelecionado)lance).setIdDado(idDado);
+		rede.enviarJogada(lance);
 	}
 
 	public int atualizarDevidoRecebimento(Lance jogada) {
-		// TODO - implement Controle.atualizarDevidoRecebimento
-		throw new UnsupportedOperationException();
+		int tipoLance = jogada.getTipoLance();
+		int idPlayerDaVez = jogada.getIdPlayerDaVez();
+		
+		int ultimoPlayerDaVez = idPlayerDaVez-1;
+		if (ultimoPlayerDaVez == -1)
+			ultimoPlayerDaVez = mesaJogo.numJogadores()-1;
+		
+		if (tipoLance == 0) {
+			int nivel = ((LanceVotarNivel)jogada).getLevelVoted();
+			mesaJogo.contabilizarVotoNivel(nivel);
+		} else {
+			if (tipoLance == 3) {
+				int roundTotal = ((LanceRoundFinalizado)jogada).getRoundTotalDoUltimoDaVez();
+				mesaJogo.atualizarGrandTotalDeUmPlayer(roundTotal, ultimoPlayerDaVez);
+			}
+		}
+		return tipoLance;
 	}
 
 	public boolean verificaTodosVotaram() {
@@ -113,8 +199,7 @@ public class Controle {
 	}
 
 	public int setAside(boolean veioDoRoll) {
-		// TODO - implement Controle.setAside
-		throw new UnsupportedOperationException();
+		return mesaJogo.setAside(meuID);
 	}
 
 	public int getPontos() {
@@ -123,8 +208,7 @@ public class Controle {
 	}
 
 	public void finalizarPartida() {
-		// TODO - implement Controle.finalizarPartida
-		throw new UnsupportedOperationException();
+		rede.finalizarPartida();
 	}
 
 }

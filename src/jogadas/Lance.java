@@ -1,4 +1,4 @@
-package abstracts;
+package jogadas;
 import br.ufsc.inf.leobr.cliente.Jogada;
 
 @SuppressWarnings("serial")
@@ -15,9 +15,8 @@ public abstract class Lance implements Jogada {
 		return this.idPlayerDaVez;
 	}
 
-	public String setTipoLance(int tipo) {
-		// TODO - implement Lance.setTipoLance
-		throw new UnsupportedOperationException();
+	public void setTipoLance(int tipo) {
+		this.tipoLance = tipo;
 	}
 
 	public int getTipoLance() {

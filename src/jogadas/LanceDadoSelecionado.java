@@ -1,10 +1,11 @@
 package jogadas;
-import abstracts.Lance;
 
 @SuppressWarnings("serial")
 public class LanceDadoSelecionado extends Lance {
 
 	protected int idDado;
+	
+	public LanceDadoSelecionado() {}
 
 	public void setIdDado(int idDado) {
 		this.idDado = idDado;

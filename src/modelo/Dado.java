@@ -43,6 +43,7 @@ public class Dado implements Jogada {
 	public void liberarDado() {
 		if (setAside) {
 			setAside = false;
+			valor = 0;
 		}
 	}
 

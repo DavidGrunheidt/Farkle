@@ -114,8 +114,7 @@ public class Controle {
 	}
 
 	public void mudaJogadorDaVez() {
-		// TODO - implement Controle.mudaJogadorDaVez
-		throw new UnsupportedOperationException();
+		mesaJogo.liberarDados();
 	}
 
 	public void comecarPartida() {
@@ -142,8 +141,7 @@ public class Controle {
 	}
 
 	public boolean verificarSeMinhaVez() {
-		// TODO - implement Controle.verificarSeMinhaVez
-		throw new UnsupportedOperationException();
+		return idPlayerDaVez == meuID;
 	}
 
 	public void zeraPontuacaoRound() {
@@ -160,7 +158,7 @@ public class Controle {
 
 	public int atualizarDevidoRecebimento(Lance jogada) {
 		int tipoLance = jogada.getTipoLance();
-		int idPlayerDaVez = jogada.getIdPlayerDaVez();
+		idPlayerDaVez = jogada.getIdPlayerDaVez();
 		
 		int ultimoPlayerDaVez = idPlayerDaVez-1;
 		if (ultimoPlayerDaVez == -1)
@@ -179,32 +177,26 @@ public class Controle {
 	}
 
 	public boolean verificaTodosVotaram() {
-		// TODO - implement Controle.verificaTodosVotaram
-		throw new UnsupportedOperationException();
-	}
-
-	public int verificaFarkled(int valores) {
-		// TODO - implement Controle.verificaFarkled
-		throw new UnsupportedOperationException();
+		return mesaJogo.verificaTodosVotaram();
 	}
 
 	public void mudouVez() {
-		// TODO - implement Controle.mudouVez
-		throw new UnsupportedOperationException();
+		mesaJogo.liberarDados();
 	}
 
 	public boolean verificaSeFoiUltimo() {
-		// TODO - implement Controle.verificaSeFoiUltimo
-		throw new UnsupportedOperationException();
+		int ultimoPlayerDaVez = idPlayerDaVez-1;
+		if (ultimoPlayerDaVez == -1)
+			ultimoPlayerDaVez = mesaJogo.numJogadores()-1;
+		return meuID == ultimoPlayerDaVez;
 	}
 
 	public int setAside(boolean veioDoRoll) {
 		return mesaJogo.setAside(meuID);
 	}
 
-	public int getPontos() {
-		// TODO - implement Controle.getPontos
-		throw new UnsupportedOperationException();
+	public int getGrandTotal() {
+		return mesaJogo.getGrandTotal(meuID);
 	}
 
 	public void finalizarPartida() {

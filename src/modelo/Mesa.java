@@ -13,6 +13,7 @@ public class Mesa {
 	protected int levelVotos;
 	
 	public Mesa(List<String> listaJogadores) {
+		this.listaJogadores = new HashMap<Integer, Jogador>();
 		contVotos = 0;
 		levelVotos = 0;
 		for (int i = 0; i < listaJogadores.size(); i++) {
@@ -29,11 +30,7 @@ public class Mesa {
 	public int numJogadores() {
 		return listaJogadores.size();
 	}
-
-	public void setLevel(Level level) {
-		this.level = level;
-	}
-
+	
 	public int VerificaFarkled(int[] valores, int meuID) {
 		int farkledType = 0;
 		if (level.verificaFarkled(valores)) {
@@ -47,21 +44,6 @@ public class Mesa {
 			listaJogadores.replace(meuID, jogador);
 		}
 		return farkledType;
-	}
-
-	public void zeraPontuacaoRound() {
-		// TODO - implement Mesa.zeraPontuacaoRound
-		throw new UnsupportedOperationException();
-	}
-
-	public int VerificaThreeFarkled(int idJogador) {
-		// TODO - implement Mesa.VerificaThreeFarkled
-		throw new UnsupportedOperationException();
-	}
-
-	public int definirNivel() {
-		// TODO - implement Mesa.definirNivel
-		throw new UnsupportedOperationException();
 	}
 
 	public void comecarPartida() {
@@ -81,8 +63,7 @@ public class Mesa {
 	}
 
 	public void liberarDados() {
-		// TODO - implement Mesa.liberarDados
-		throw new UnsupportedOperationException();
+		level.liberarDados();
 	}
 	
 	public void selecionarDado(int idDado) {
@@ -133,18 +114,19 @@ public class Mesa {
 	}
 
 	public Jogador getJogador(int meuID) {
-		// TODO - implement Mesa.getJogador
-		throw new UnsupportedOperationException();
+		return listaJogadores.get(meuID);
 	}
 
-	public int getPontos(int meuID) {
-		// TODO - implement Mesa.getPontos
-		throw new UnsupportedOperationException();
+	public int getGrandTotal(int meuID) {
+		return listaJogadores.get(meuID).getGrandTotal();
 	}
 
 	public int getDescontoNoGrandTotal() {
-		// TODO - implement Mesa.getDescontoNoGrandTotal
-		throw new UnsupportedOperationException();
+		return level.getDescontoThreeFarkled();
+	}
+	
+	public boolean verificaTodosVotaram() {
+		return contVotos == listaJogadores.size();
 	}
 
 }

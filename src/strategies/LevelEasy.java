@@ -11,8 +11,9 @@ import modelo.ValoresPontuacao;
 public class LevelEasy extends Level {
 	
 	public LevelEasy() {
+		maxPont = 5000;
 		gerenciadorDeDados = new GerenciadorDados(6);
-		descontoThreeFarkled = 500;
+		descontoThreeFarkled = -500;
 		minimoParaBank = 200;
 		pontuacoes = new HashMap<String, Integer>();
 		

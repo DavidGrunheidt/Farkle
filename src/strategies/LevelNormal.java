@@ -10,8 +10,9 @@ import modelo.ValoresPontuacao;
 public class LevelNormal extends Level {
 	
 	public LevelNormal() {
+		maxPont = 6000;
 		gerenciadorDeDados = new GerenciadorDados(5);
-		descontoThreeFarkled = 750;
+		descontoThreeFarkled = -750;
 		minimoParaBank = 250;
 		pontuacoes = new HashMap<String, Integer>();
 		

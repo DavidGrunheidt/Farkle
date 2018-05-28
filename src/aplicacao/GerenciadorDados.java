@@ -13,6 +13,8 @@ public class GerenciadorDados {
 	
 	public GerenciadorDados(int numDados) {
 		dados = new Dado[numDados];
+		for (int i = 0; i < numDados; i++)
+			dados[i] = new Dado(i);
 		numDadosSetAside = 0;
 		numDadosLivres = numDados;
 	}
@@ -50,20 +52,17 @@ public class GerenciadorDados {
 	}
 
 	public void incrementarNumDeSetAsides(int numDadosSelecionados) {
-		// TODO - implement GerenciadorDados.incrementarNumDeSetAsides
-		throw new UnsupportedOperationException();
+		numDadosSetAside += numDadosSelecionados;
+		numDadosLivres -= numDadosSelecionados;
 	}
 
 	public int getNumDadosLivres() {
 		return this.numDadosLivres;
 	}
 
-	public void incrementarNumDeLivres() {
-		// TODO - implement GerenciadorDados.incrementarNumDeLivres
-		throw new UnsupportedOperationException();
-	}
-
 	public void liberarDados() {
+		numDadosLivres = dados.length;
+		numDadosSetAside = 0;
 		for (int i = 0; i < dados.length; i++)
 			dados[i].liberarDado();
 	}
@@ -84,11 +83,6 @@ public class GerenciadorDados {
 			valores[i] = valoresAux.get(i);
 		
 		return valores;
-	}
-
-	public int getValoresDosDadosLivres() {
-		// TODO - implement GerenciadorDados.getValoresDosDadosLivres
-		throw new UnsupportedOperationException();
 	}
 
 	public boolean verificaSeHotDice() {

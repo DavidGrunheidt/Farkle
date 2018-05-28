@@ -10,7 +10,7 @@ public class LanceRoll extends Lance {
 	public LanceRoll() {}
 
 	public void setDados(Dado[] dados) {
-		this.dados = dados;
+		this.dados = dados.clone();
 	}
 
 	public Dado[] getDados() {

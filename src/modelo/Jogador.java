@@ -25,12 +25,14 @@ public class Jogador {
 		return grandTotal;
 	}
 
-	public int descontarThreeFarkled(int custoThreeFarkled) {
-		// TODO - implement Jogador.descontarThreeFarkled
-		throw new UnsupportedOperationException();
+	public void descontarThreeFarkled(int custoThreeFarkled) {
+		grandTotal += custoThreeFarkled;
+		if (grandTotal < 0)
+			grandTotal = 0;
 	}
 
 	public boolean contabilizarFarkled() {
+		roundTotal = 0;
 		boolean threeFarkled = false;
 		if (++contFarkled == 3) {
 			threeFarkled = true;
@@ -44,8 +46,7 @@ public class Jogador {
 	}
 
 	public void atualizarRoundTotal(int roundTotal) {
-		// TODO - implement Jogador.atualizarRoundTotal
-		throw new UnsupportedOperationException();
+		this.roundTotal += roundTotal;
 	}
 
 	public String getNome() {

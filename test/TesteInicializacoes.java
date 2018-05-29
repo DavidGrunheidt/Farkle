@@ -38,7 +38,7 @@ public class TesteInicializacoes {
 		mesaJogo.contabilizarVotoNivel(0);
 		mesaJogo.contabilizarVotoNivel(0);
 		mesaJogo.comecarPartida();
-		assertEquals(-500, mesaJogo.getDescontoNoGrandTotal());
+		assertEquals(-300, mesaJogo.getDescontoNoGrandTotal());
 	}
 	
 	@Test
@@ -47,7 +47,7 @@ public class TesteInicializacoes {
 		mesaJogo.contabilizarVotoNivel(1);
 		mesaJogo.contabilizarVotoNivel(0);
 		mesaJogo.comecarPartida();
-		assertEquals(-750, mesaJogo.getDescontoNoGrandTotal());
+		assertEquals(-400, mesaJogo.getDescontoNoGrandTotal());
 	}
 	
 	@Test
@@ -56,6 +56,6 @@ public class TesteInicializacoes {
 		mesaJogo.contabilizarVotoNivel(2);
 		mesaJogo.contabilizarVotoNivel(2);
 		mesaJogo.comecarPartida();
-		assertEquals(-1000, mesaJogo.getDescontoNoGrandTotal());
+		assertEquals(-500, mesaJogo.getDescontoNoGrandTotal());
 	}
 }

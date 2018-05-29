@@ -12,7 +12,7 @@ public class LevelHard extends Level {
 	public LevelHard() {
 		maxPont = 7000;
 		gerenciadorDeDados = new GerenciadorDados(5);
-		descontoThreeFarkled = -1000;
+		descontoThreeFarkled = -500;
 		minimoParaBank = 300;
 		pontuacoes = new HashMap<String, Integer>();
 		

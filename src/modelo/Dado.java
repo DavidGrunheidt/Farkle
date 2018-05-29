@@ -12,7 +12,7 @@ public class Dado implements Jogada {
 	public Dado(int idDado) {
 		valor = 0;
 		setAside = false;
-		selecionado = true;
+		selecionado = false;
 		this.idDado = idDado;
 	}
 

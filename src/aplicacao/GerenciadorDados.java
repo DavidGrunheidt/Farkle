@@ -29,19 +29,17 @@ public class GerenciadorDados {
 	}
 
 	public void selecionarDado(int idDado) {
-		for (int i = 0; i < dados.length; i++) {
-			if (dados[i].getIdDado() == idDado)
-				dados[i].trocaSelecionado();
-		}
+		dados[idDado].trocaSelecionado();
 	}
 
 	public int[] rollDadosLivres() {
 		int[] valores = new int[numDadosLivres];
+		Random gerador = new Random();
 		for (int i = 0; i < dados.length; i++) {
 			if (!dados[i].isSetAside()) {
-				Random gerador = new Random();
 				int valor = 1 + gerador.nextInt(6);
 				dados[i].setValor(valor);
+				valores[i] = valor;
 			}
 		}
 		return valores;

@@ -12,7 +12,7 @@ public class LevelNormal extends Level {
 	public LevelNormal() {
 		maxPont = 6000;
 		gerenciadorDeDados = new GerenciadorDados(5);
-		descontoThreeFarkled = -750;
+		descontoThreeFarkled = -400;
 		minimoParaBank = 250;
 		pontuacoes = new HashMap<String, Integer>();
 		

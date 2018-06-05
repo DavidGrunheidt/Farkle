@@ -30,5 +30,7 @@ public class LevelHard extends Level {
 				pontuacoes.put(key, pontuacao);
 			}
 		}
+		pontuacoes.put("_2_3_4_5_6",750);
+		pontuacoes.put("_1_2_3_4_5",750);
 	}
 }

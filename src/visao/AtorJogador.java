@@ -257,5 +257,9 @@ public class AtorJogador {
 		// TODO - implement AtorJogador.atualizarGrandTotal
 		throw new UnsupportedOperationException();
 	}
+	
+	public void receberSolicitacaoInicio(int posicao) {
+		controle.prepararParaVotos(posicao-1);
+	}
 
 }

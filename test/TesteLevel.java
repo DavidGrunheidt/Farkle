@@ -81,5 +81,33 @@ public class TesteLevel {
 		assertTrue(levelMedio.verificaFarkled(valores));
 		assertTrue(levelDificil.verificaFarkled(valores));
 	}
+	
+	@Test
+	public void testaProcurarPontuacao() {
+		int valores[] = {2, 3,4};
+		assertEquals(0, levelFacil.procurarPontuacao(valores));
+		assertEquals(0 ,levelMedio.procurarPontuacao(valores));
+		assertEquals(0 ,levelDificil.procurarPontuacao(valores));
+		
+		valores = new int[] {2,2,2};
+		assertTrue(levelFacil.procurarPontuacao(valores) > 0);
+		assertTrue(levelMedio.procurarPontuacao(valores) > 0);
+		assertTrue(levelDificil.procurarPontuacao(valores) > 0);
+		
+		valores = new int[] {1};
+		assertTrue(levelFacil.procurarPontuacao(valores) > 0);
+		assertTrue(levelMedio.procurarPontuacao(valores) > 0);
+		assertTrue(levelDificil.procurarPontuacao(valores) > 0);
+		
+		valores = new int[] {5};
+		assertTrue(levelFacil.procurarPontuacao(valores) > 0);
+		assertTrue(levelMedio.procurarPontuacao(valores) > 0);
+		assertTrue(levelDificil.procurarPontuacao(valores) > 0);
+		
+		valores = new int[] {2,2,3,3,3};
+		assertTrue(levelFacil.procurarPontuacao(valores) > 0);
+		assertTrue(levelMedio.procurarPontuacao(valores) > 0);
+		assertTrue(levelDificil.procurarPontuacao(valores) > 0);
+	}
 
 }

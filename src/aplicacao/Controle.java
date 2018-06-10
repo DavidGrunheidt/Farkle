@@ -16,6 +16,7 @@ public class Controle {
 
 	protected AtorNetGames rede;
 	protected Mesa mesaJogo;
+	protected String meuNome;
 	protected int meuID;
 	protected int idPlayerDaVez;
 	protected boolean conectado;
@@ -71,7 +72,7 @@ public class Controle {
 	}
 
 	public boolean clickConectar(String nome, String servidor) {
-		// TODO - implement Controle.clickConectar
+		meuNome = nome;
 		throw new UnsupportedOperationException();
 	}
 
@@ -136,8 +137,10 @@ public class Controle {
 		return iniciouPartida;
 	}
 
-	public void prepararParaVotos() {
+	public void prepararParaVotos(int meuID) {
 		mesaJogo = new Mesa(rede.getListaOrdenadaJogadores());
+		this.meuID = meuID;
+		idPlayerDaVez = 0;
 	}
 
 	public boolean verificarSeMinhaVez() {

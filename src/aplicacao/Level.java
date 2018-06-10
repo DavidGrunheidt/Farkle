@@ -19,12 +19,9 @@ public abstract class Level {
 		for (int i = 0; i < valoresAux.length; i++)
 			contValues[valoresAux[i]-1]++;
 		
-		if ((contValues[0] >= 1) || (contValues[4] >= 1)) {
+		if ((contValues[0] >= 1) || (contValues[4] >= 1) || (contValues[1] >= 3) || (contValues[2] >= 3) || (contValues[3] >= 3) || (contValues[5] >= 3))
 			farkled = false;
-		} else {
-			if ((contValues[1] >= 3) || (contValues[2] >= 3) || (contValues[3] >= 3) || (contValues[5] >= 3))
-				farkled = false;
-		}
+		
 		return farkled;
 	}
 

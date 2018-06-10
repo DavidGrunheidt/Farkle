@@ -13,15 +13,18 @@ public abstract class Level {
 
 	public boolean verificaFarkled(int[] valores) {
 		boolean farkled = true;
-		int[] valoresAux = quickSortValores(valores).clone();
-		String keyAux = "";
+		int[] valoresAux = sortValores(valores).clone();
+		int[] contValues = new int[6];
 		
 		for (int i = 0; i < valoresAux.length; i++)
-			keyAux = keyAux.concat(""+valoresAux[i]);
+			contValues[valoresAux[i]-1]++;
 		
-		if (pontuacoes.get(keyAux) != null)
+		if ((contValues[0] >= 1) || (contValues[4] >= 1)) {
 			farkled = false;
-		
+		} else {
+			if ((contValues[1] >= 3) || (contValues[2] >= 3) || (contValues[3] >= 3) || (contValues[5] >= 3))
+				farkled = false;
+		}
 		return farkled;
 	}
 
@@ -47,9 +50,18 @@ public abstract class Level {
 	}
 
 
-	public int[] quickSortValores(int[] valores) {
-		// TODO - implement Level.quickSortValores
-		throw new UnsupportedOperationException();
+	public int[] sortValores(int[] valores) {
+        for (int i = 0; i < valores.length - 1; i++) {
+            int index = i;
+            for (int j = i + 1; j < valores.length; j++)
+                if (valores[j] < valores[index]) 
+                    index = j;
+      
+            int smallerNumber = valores[index];  
+            valores[index] = valores[i];
+            valores[i] = smallerNumber;
+        }
+        return valores;
 	}
 
 	
@@ -68,7 +80,7 @@ public abstract class Level {
 
 	public int pontuarRound() {
 		int valores[] = gerenciadorDeDados.getValoresDadosSelecionados();
-		valores = quickSortValores(valores);
+		valores = sortValores(valores);
 		int pontuacao = procurarPontuacao(valores);
 		if (pontuacao > 0)
 			gerenciadorDeDados.incrementarNumDeSetAsides(valores.length);

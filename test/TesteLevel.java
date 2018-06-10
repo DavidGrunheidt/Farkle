@@ -1,4 +1,5 @@
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -61,15 +62,24 @@ public class TesteLevel {
  		for (int i = 0; i < dadosFacil.length; i++) {
  			assertEquals(true, dadosFacil[i].isSelecionado());
  			if (i < dadosMedio.length) {
- 				assertEquals(true, dadosMedio[i].isSelecionado());
- 				assertEquals(true, dadosDificil[i].isSelecionado());
+ 				assertTrue(dadosMedio[i].isSelecionado());
+ 				assertTrue(dadosDificil[i].isSelecionado());
  			}
  		}
 	}
 	
 	@Test
 	public void testaTesteFarkled() {
+		int valores[] = {2,4,2,6,3,2};
+		assertFalse(levelFacil.verificaFarkled(valores));
+		assertFalse(levelMedio.verificaFarkled(valores));
+		assertFalse(levelDificil.verificaFarkled(valores));
 		
+		valores = new int[]{2,3,4};
+		
+		assertTrue(levelFacil.verificaFarkled(valores));
+		assertTrue(levelMedio.verificaFarkled(valores));
+		assertTrue(levelDificil.verificaFarkled(valores));
 	}
 
 }

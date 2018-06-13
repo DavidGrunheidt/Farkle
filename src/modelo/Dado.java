@@ -41,10 +41,9 @@ public class Dado implements Jogada {
 	}
 
 	public void liberarDado() {
-		if (setAside) {
+		if (setAside) 
 			setAside = false;
-			valor = 0;
-		}
+		valor = 0;
 	}
 
 	public int getIdDado() {

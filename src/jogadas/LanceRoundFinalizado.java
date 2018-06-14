@@ -9,13 +9,11 @@ public class LanceRoundFinalizado extends Lance {
 	public LanceRoundFinalizado() {}
 
 	public void setRoundTotalDoUltimoDaVez(int roundTotal) {
-		// TODO - implement LanceRoundFinalizado.setRoundTotalDoUltimoDaVez
-		throw new UnsupportedOperationException();
+		this.roundTotalDoUltimoPlayerDaVez = roundTotal;
 	}
 
 	public int getRoundTotalDoUltimoDaVez() {
-		// TODO - implement LanceRoundFinalizado.getRoundTotalDoUltimoDaVez
-		throw new UnsupportedOperationException();
+		return this.roundTotalDoUltimoPlayerDaVez;
 	}
 
 	public int getFarkledType() {

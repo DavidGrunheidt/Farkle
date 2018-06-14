@@ -5,6 +5,7 @@ import factorys.LanceFactory;
 import modelo.Dado;
 import modelo.Jogador;
 import modelo.Mesa;
+import rede.AtorNetGames;
 import jogadas.LanceRoll;
 import jogadas.LanceRoundFinalizado;
 import jogadas.LanceFinal;
@@ -23,7 +24,7 @@ public class Controle {
 	protected static LanceFactory lanceFactory;
 	
 	public Controle() {
-		
+		rede = new AtorNetGames();
 	}
 
 	public void nivelSelecionado(int nivel) {
@@ -76,14 +77,11 @@ public class Controle {
 		throw new UnsupportedOperationException();
 	}
 
-	public void desconectar() {
-		// TODO - implement Controle.desconectar
-		throw new UnsupportedOperationException();
-	}
-
 	public void clickAbandonarJogo() {
-		// TODO - implement Controle.clickAbandonarJogo
-		throw new UnsupportedOperationException();
+		String message = "Jogador = ";
+		message.concat(meuNome);
+		message.concat(" abandonou o jogo");
+		rede.desconectar(message);
 	}
 
 	public int clickBank() {
@@ -147,11 +145,6 @@ public class Controle {
 		return idPlayerDaVez == meuID;
 	}
 
-	public void zeraPontuacaoRound() {
-		// TODO - implement Controle.zeraPontuacaoRound
-		throw new UnsupportedOperationException();
-	}
-
 	public void selecionarDado(int idDado) {
 		mesaJogo.selecionarDado(idDado);
 		Lance lance = lanceFactory.criarLance(2, meuID);
@@ -204,6 +197,10 @@ public class Controle {
 
 	public void finalizarPartida() {
 		rede.finalizarPartida();
+	}
+	
+	public int getMeuID() {
+		return meuID;
 	}
 
 }

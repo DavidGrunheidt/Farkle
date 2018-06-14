@@ -1,19 +1,51 @@
 package visao;
+import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import aplicacao.Controle;
 import jogadas.Lance;
+import jogadas.LanceDadoSelecionado;
+import jogadas.LanceFinal;
+import jogadas.LanceRoll;
+import jogadas.LanceRoundFinalizado;
+import jogadas.LanceVotarNivel;
+import modelo.Dado;
 
 public class AtorJogador {
 
 	protected Controle controle;
 	protected static AtorJogador instanciaUnica;
-
-	public AtorJogador getInstance() {
+	
+	protected JFrame janela, janelaAjuda;
+	protected JPanel painelAjuda, painelNotConectado, painelConectado;
+	protected JPanel painelVotarNivel, painelPontuacoes, painelJogadorDaVez;
+	protected JPanel painelOpcoesDurantePartida, painelDosDados;
+	protected JTextField nome, quantJog;
+	protected JButton botaoAjuda, botaoConectar, botaoSair, botaoCriarNovoJogo;
+	protected JButton botaoDesconectar, botaoVotar, botaoRoll, botaoBank, botaoAbandonarJogo;
+	protected LinkedList<JButton>dadosLivresPlayerDavez;
+	protected JLabel labelAjuda;
+	protected LinkedList<JLabel> dadosLivresPlayerEsperando, dadosSetAside, labelJogadores, labelPontuacoes;
+	protected Icon iconeAjuda, iconeConectar, iconeSair, iconeCriarNovoJogo, iconeDesconectar;
+	protected Icon iconeVotar, iconeRoll, iconeBank, iconeAbandonarJogo, iconeVoceGanhou;
+	protected Icon[] iconeValoresDados;
+	protected BufferedImage backgroundImage;
+	
+	public static AtorJogador getInstance() {
 		if (AtorJogador.instanciaUnica == null)
 			AtorJogador.instanciaUnica = new AtorJogador();
 		return AtorJogador.instanciaUnica;
 	}
 	
 	AtorJogador() {
+		controle = new Controle();
 		
 	}
 
@@ -23,39 +55,73 @@ public class AtorJogador {
 	}
 
 	public void clickConectar() {
-		// TODO - implement AtorJogador.clickConectar
-		throw new UnsupportedOperationException();
+		String nome = null, servidor = null;
+		////////////////////////
+		boolean conectar = controle.clickConectar(nome, servidor);
+		
+		if (conectar) {
+			this.desabilitarInterfaceGraficaNotConectado();
+			this.habilitarInterfaceGraficaConectado();
+		} else {
+			////////////////
+		}
 	}
 
 	public void clickIniciarNovoJogo() {
-		// TODO - implement AtorJogador.clickIniciarNovoJogo
-		throw new UnsupportedOperationException();
+		boolean conectado = controle.verificaSeConectado();
+		if (conectado) {
+			int numJogadores = 0;
+			//////////////////////
+			boolean iniciouPartida = controle.iniciarPartida(numJogadores);
+		} else {
+			//////////////////
+		}
 	}
 
 	public void clickMostrarAjuda() {
-		// TODO - implement AtorJogador.clickMostrarAjuda
-		throw new UnsupportedOperationException();
+		this.mostrarPopUpJanelaAjuda();
 	}
 
 	public void selecionarNivel(int nivel) {
-		// TODO - implement AtorJogador.selecionarNivel
-		throw new UnsupportedOperationException();
+		controle.nivelSelecionado(nivel);
+		this.desabilitarInterfaceRealizarVotacao();
 	}
 
 	public void clickRoll() {
-		// TODO - implement AtorJogador.clickRoll
-		throw new UnsupportedOperationException();
+		if (this.setAside(true)) {
+			int[] valores = controle.clickRoll().clone();
+			if (valores[0] < 0)
+				this.atualizarInterfaceGrafica(valores[0]);
+		}
 	}
 
 
 	public void selecionarDado(int idDado) {
-		// TODO - implement AtorJogador.selecionarDado
-		throw new UnsupportedOperationException();
+		controle.selecionarDado(idDado);
 	}
 
 	public void clickBank() {
-		// TODO - implement AtorJogador.clickBank
-		throw new UnsupportedOperationException();
+		if (this.setAside(false)) {
+			int deuBank = controle.clickBank();
+			if ((deuBank == 1) || (deuBank == 2)) {
+				this.atualizarPontuacaoTabelaJogadores(controle.getMeuID(), controle.getGrandTotal());
+				if (deuBank == 1) {
+					this.atualizarInterfaceGrafica(0);
+				} else {
+					/////////////////////////
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					this.partidaFinalizada();
+					this.desabilitarInterfaceGraficaPartidaEmAndamento();
+					this.desabilitarInterfaceGraficaConectado();
+				}
+			} else {
+				///////////////////
+			}	
+		}
 	}
 
 	public void clickAbandonarJogo() {
@@ -64,8 +130,10 @@ public class AtorJogador {
 	}
 
 	public void clickSairJogo() {
-		// TODO - implement AtorJogador.clickSairJogo
-		throw new UnsupportedOperationException();
+		boolean confirmou = false;
+		/////////////////
+		if (confirmou)
+			controle.clickSairJogo();
 	}
 
 	public void desabilitarInterfaceRealizarVotacao() {
@@ -128,11 +196,6 @@ public class AtorJogador {
 		throw new UnsupportedOperationException();
 	}
 
-	public void selecionarQuantDePlayers(int numJogadores) {
-		// TODO - implement AtorJogador.selecionarQuantDePlayers
-		throw new UnsupportedOperationException();
-	}
-
 	public void habilitarInterfaceGraficaRealizarVotacao() {
 		// TODO - implement AtorJogador.habilitarInterfaceGraficaRealizarVotacao
 		throw new UnsupportedOperationException();
@@ -149,8 +212,61 @@ public class AtorJogador {
 	}
 
 	public void atualizarDevidoRecebimento(Lance jogada) {
-		// TODO - implement AtorJogador.atualizarDevidoRecebimento
-		throw new UnsupportedOperationException();
+		int tipoLance = controle.atualizarDevidoRecebimento(jogada);
+		switch(tipoLance) {
+		case 0:
+			int levelVoted = ((LanceVotarNivel)jogada).getLevelVoted();
+			this.atualizarVotos(levelVoted);
+			boolean minhaVez = controle.verificarSeMinhaVez();
+			if (minhaVez)
+				this.votarNivel();
+			boolean todosVotaram = controle.verificaTodosVotaram();
+			if (todosVotaram)
+				this.comecarPartida();
+			break;
+		case 1:
+			Dado[] dados = ((LanceRoll)jogada).getDados().clone();
+			int roundTotal = ((LanceRoll)jogada).getRoundTotal();
+			int idDado, valor;
+			boolean setAside;
+			for (int i = 0; i < dados.length; i++) {
+				idDado = dados[i].getIdDado();
+				valor = dados[i].getValor();
+				setAside = dados[i].isSetAside();
+				if (setAside) {
+					this.colocarDadoNaAreaLivres(idDado, valor);
+				} else {
+					this.colocarDadoNaAreaLivres(idDado, valor);
+				}
+			}
+			int idDaVez = jogada.getIdPlayerDaVez();
+			this.atualizarRoundTotal(idDaVez, roundTotal);
+			break;
+		case 2:
+			int idDadoSelect = ((LanceDadoSelecionado)jogada).getIdDado();
+			this.inverterSelecaoDeDado(idDadoSelect);
+			break;
+		case 3:
+			int idUltimoDaVez = ((LanceRoundFinalizado)jogada).getIdPlayerDaVez();
+			int roundTotalLast = ((LanceRoundFinalizado)jogada).getRoundTotalDoUltimoDaVez();
+			int farkledType = ((LanceRoundFinalizado)jogada).getFarkledType();
+			this.atualizarGrandTotal(idUltimoDaVez, roundTotalLast);
+			this.atualizarInterfaceGrafica(farkledType);
+			break;
+		case 4:
+			String name = ((LanceFinal)jogada).getWinnerName();
+			int points = ((LanceFinal)jogada).getPoints();
+			this.mostrarVencedor(name, points);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.desabilitarInterfaceGraficaPartidaEmAndamento();
+			this.habilitarInterfaceGraficaConectado();
+			break;
+		}
 	}
 
 	public void desabilitarInterfaceGraficaEsperandoAllVotos() {
@@ -193,14 +309,26 @@ public class AtorJogador {
 		throw new UnsupportedOperationException();
 	}
 
-	public void informarDadosNaoValidos(boolean veioDoRoll) {
+	public void informarDadosNaoValidos() {
 		// TODO - implement AtorJogador.informarDadosNaoValidos
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean setAside(boolean veioDoRoll) {
-		// TODO - implement AtorJogador.setAside
-		throw new UnsupportedOperationException();
+		boolean resp = true;
+		int continuar = controle.setAside(veioDoRoll);
+		if(continuar == 0) {
+			this.informarDadosNaoValidos();
+			resp = false;
+		} else {
+			if ((continuar == 1) && (veioDoRoll)) {
+				this.colocarSelecionadosNaAreaSetAside();
+			} else {
+				if ((continuar == 2) && (veioDoRoll))
+					this.colocarSetAsidesNaAreaLivre();
+			}
+		}
+		return resp;
 	}
 
 	public void habilitarInterfaceGraficaNotConectado() {
@@ -208,14 +336,9 @@ public class AtorJogador {
 		throw new UnsupportedOperationException();
 	}
 
-	public void informaConfirma(boolean confirmou) {
-		// TODO - implement AtorJogador.informaConfirma
-		throw new UnsupportedOperationException();
-	}
 
 	public void partidaFinalizada() {
-		// TODO - implement AtorJogador.partidaFinalizada
-		throw new UnsupportedOperationException();
+		controle.finalizarPartida();
 	}
 
 	public void atualizarVotos(int levelVoted) {
@@ -224,13 +347,14 @@ public class AtorJogador {
 	}
 
 	public void votarNivel() {
-		// TODO - implement AtorJogador.votarNivel
-		throw new UnsupportedOperationException();
+		this.habilitarInterfaceGraficaRealizarVotacao();
 	}
 
 	public void comecarPartida() {
-		// TODO - implement AtorJogador.comecarPartida
-		throw new UnsupportedOperationException();
+		controle.comecarPartida();
+		this.desabilitarInterfaceGraficaEsperandoAllVotos();
+		this.habilitarInterfaceGraficaPartidaEmAndamento();
+		this.atualizarInterfaceGrafica(0);
 	}
 
 	public void colocarDadoNaAreaSetAside(int idDado, int valor) {
@@ -253,13 +377,22 @@ public class AtorJogador {
 		throw new UnsupportedOperationException();
 	}
 
-	public void atualizarGrandTotal(int idUltimoDaVez, int grandTotal) {
+	public JFrame getJanela() {
+		return janela;
+	}
+
+	public void atualizarGrandTotal(int idUltimoDaVez, int roundTotal) {
 		// TODO - implement AtorJogador.atualizarGrandTotal
 		throw new UnsupportedOperationException();
 	}
 	
 	public void receberSolicitacaoInicio(int posicao) {
 		controle.prepararParaVotos(posicao-1);
+		this.desabilitarInterfaceGraficaConectado();
+		this.habilitarInterfaceGraficaEsperandoAllVotos();
+		boolean minhaVez = controle.verificarSeMinhaVez();
+		if (minhaVez)
+			this.votarNivel();
 	}
 
 }

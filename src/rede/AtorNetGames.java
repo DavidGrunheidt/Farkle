@@ -17,12 +17,11 @@ import visao.AtorJogador;
 @SuppressWarnings("serial")
 public class AtorNetGames implements OuvidorProxy {
 
-	protected AtorJogador atorJogador;
+	protected static AtorJogador atorJogador;
 	protected Proxy proxy;
 	
-	public AtorNetGames() {
-		super();
-		atorJogador = AtorJogador.getInstance();
+	public AtorNetGames(AtorJogador atorJogador) {
+		AtorNetGames.atorJogador = atorJogador;
 		proxy = Proxy.getInstance();
 		proxy.addOuvinte(this);
 	}
@@ -58,12 +57,7 @@ public class AtorNetGames implements OuvidorProxy {
 	}
 
 	public void iniciarPartida(int numJogadores) throws NaoConectadoException {
-		try {
 			proxy.iniciarPartida(numJogadores);
-		} catch(NaoConectadoException e) {
-			JOptionPane.showMessageDialog(atorJogador.getJanela(), e.getMessage());
-			e.printStackTrace();
-		}
 	}
 
 	public void enviarJogada(Lance lance) {

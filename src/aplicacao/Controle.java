@@ -6,6 +6,7 @@ import modelo.Dado;
 import modelo.Jogador;
 import modelo.Mesa;
 import rede.AtorNetGames;
+import visao.AtorJogador;
 import jogadas.LanceRoll;
 import jogadas.LanceRoundFinalizado;
 import jogadas.LanceFinal;
@@ -23,8 +24,8 @@ public class Controle {
 	protected boolean conectado;
 	protected static LanceFactory lanceFactory;
 	
-	public Controle() {
-		rede = new AtorNetGames();
+	public Controle(AtorJogador atorJogador) {
+		rede = new AtorNetGames(atorJogador);
 	}
 
 	public void nivelSelecionado(int nivel) {
@@ -73,8 +74,8 @@ public class Controle {
 	}
 
 	public boolean clickConectar(String nome, String servidor) {
-		meuNome = nome;
-		throw new UnsupportedOperationException();
+		boolean conectado = rede.conectar(servidor, nome);
+		return conectado;
 	}
 
 	public void clickAbandonarJogo() {
@@ -124,15 +125,8 @@ public class Controle {
 		return this.conectado;
 	}
 
-	public boolean iniciarPartida(int numJogadores) {
-		boolean iniciouPartida = true;
-		try {
+	public void iniciarPartida(int numJogadores) throws NaoConectadoException {
 			rede.iniciarPartida(numJogadores);
-		} catch (NaoConectadoException e) {
-			iniciouPartida = false;
-			e.printStackTrace();
-		}
-		return iniciouPartida;
 	}
 
 	public void prepararParaVotos(int meuID) {

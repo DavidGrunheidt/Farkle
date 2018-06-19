@@ -1,15 +1,21 @@
 package visao;
-import java.awt.image.BufferedImage;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import aplicacao.Controle;
+import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
 import jogadas.Lance;
 import jogadas.LanceDadoSelecionado;
 import jogadas.LanceFinal;
@@ -24,29 +30,24 @@ public class AtorJogador {
 	protected static AtorJogador instanciaUnica;
 	
 	protected JFrame janela, janelaAjuda;
-	protected JPanel painelAjuda, painelNotConectado, painelConectado;
+	protected JPanel painelAjuda, painelBotoes;
 	protected JPanel painelVotarNivel, painelPontuacoes, painelJogadorDaVez;
 	protected JPanel painelOpcoesDurantePartida, painelDosDados;
 	protected JTextField nome, quantJog;
 	protected JButton botaoAjuda, botaoConectar, botaoSair, botaoCriarNovoJogo;
 	protected JButton botaoDesconectar, botaoVotar, botaoRoll, botaoBank, botaoAbandonarJogo;
 	protected LinkedList<JButton>dadosLivresPlayerDavez;
-	protected JLabel labelAjuda;
+	protected JLabel labelAjuda, labelLogo;
 	protected LinkedList<JLabel> dadosLivresPlayerEsperando, dadosSetAside, labelJogadores, labelPontuacoes;
-	protected Icon iconeAjuda, iconeConectar, iconeSair, iconeCriarNovoJogo, iconeDesconectar;
-	protected Icon iconeVotar, iconeRoll, iconeBank, iconeAbandonarJogo, iconeVoceGanhou;
-	protected Icon[] iconeValoresDados;
-	protected BufferedImage backgroundImage;
 	
-	public static AtorJogador getInstance() {
-		if (AtorJogador.instanciaUnica == null)
-			AtorJogador.instanciaUnica = new AtorJogador();
-		return AtorJogador.instanciaUnica;
-	}
-	
-	AtorJogador() {
-		controle = new Controle();
-		
+	public AtorJogador() {
+		controle = new Controle(this);
+		setarJanela();
+		setarLabelLogo();
+		setarPainelBotoes();
+		setarBotaoConectar();
+		setarBotaoSair();
+		setarBotaoAjuda();
 	}
 
 	public void atualizarInterfaceGrafica(int farkledType) {
@@ -71,8 +72,13 @@ public class AtorJogador {
 		boolean conectado = controle.verificaSeConectado();
 		if (conectado) {
 			int numJogadores = 0;
+			//// Label pra selecionar num de jogadores////
 			//////////////////////
-			boolean iniciouPartida = controle.iniciarPartida(numJogadores);
+			try {
+				controle.iniciarPartida(numJogadores);
+			} catch (NaoConectadoException e) {
+				/// Error Nao Conectado /// 
+			}
 		} else {
 			//////////////////
 		}
@@ -142,13 +148,13 @@ public class AtorJogador {
 	}
 
 	public void habilitarInterfaceGraficaConectado() {
-		// TODO - implement AtorJogador.habilitarInterfaceGraficaConectado
-		throw new UnsupportedOperationException();
+		botaoCriarNovoJogo.setVisible(true);
+		botaoDesconectar.setVisible(true);
 	}
 
 	public void desabilitarInterfaceGraficaNotConectado() {
-		// TODO - implement AtorJogador.desabilitarInterfaceGraficaNotConectado
-		throw new UnsupportedOperationException();
+		botaoConectar.setVisible(false);
+		botaoSair.setVisible(false);
 	}
 
 	public void mostrarPopUpJanelaAjuda() {
@@ -196,7 +202,7 @@ public class AtorJogador {
 		throw new UnsupportedOperationException();
 	}
 
-	public void habilitarInterfaceGraficaRealizarVotacao() {
+	public int habilitarInterfaceGraficaRealizarVotacao() {
 		// TODO - implement AtorJogador.habilitarInterfaceGraficaRealizarVotacao
 		throw new UnsupportedOperationException();
 	}
@@ -332,8 +338,9 @@ public class AtorJogador {
 	}
 
 	public void habilitarInterfaceGraficaNotConectado() {
-		// TODO - implement AtorJogador.habilitarInterfaceGraficaNotConectado
-		throw new UnsupportedOperationException();
+		botaoConectar.setVisible(true);
+		botaoSair.setVisible(true);
+		botaoAjuda.setVisible(true);
 	}
 
 
@@ -347,7 +354,9 @@ public class AtorJogador {
 	}
 
 	public void votarNivel() {
-		this.habilitarInterfaceGraficaRealizarVotacao();
+		int nivel = this.habilitarInterfaceGraficaRealizarVotacao();
+		controle.nivelSelecionado(nivel);
+		this.desabilitarInterfaceRealizarVotacao();
 	}
 
 	public void comecarPartida() {
@@ -393,6 +402,129 @@ public class AtorJogador {
 		boolean minhaVez = controle.verificarSeMinhaVez();
 		if (minhaVez)
 			this.votarNivel();
+	}
+	
+	public void setarJanela() {
+		janela = new JFrame();
+		janela.setResizable(false);
+		janela.setBounds(100, 100, 641, 401);
+		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		janela.getContentPane().setLayout(null);
+		janela.setContentPane(new JLabel(new ImageIcon(getClass().getResource("/backgroundFarkle.png"))));
+		janela.setVisible(true);
+		janela.setResizable(false);
+	}
+	
+	public void setarLabelLogo() {
+		labelLogo = new JLabel("");
+		labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
+		labelLogo.setBounds(193, 10, 248, 79);
+		janela.getContentPane().add(labelLogo);
+		labelLogo.setIcon(new ImageIcon(getClass().getResource("/logo.png")));
+	}
+	
+	public void setarPainelBotoes() {
+		painelBotoes = new JPanel();
+		painelBotoes.setBounds(193, 112, 248, 210);
+		janela.getContentPane().add(painelBotoes);
+		painelBotoes.setOpaque(false);
+		painelBotoes.setLayout(null);
+	}
+	
+	public void setarBotaoConectar() {
+		botaoConectar = new JButton("");
+		botaoConectar.setBounds(22, 10, 205, 48);
+		botaoConectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				clickConectar();
+			}
+		});
+		painelBotoes.add(botaoConectar);
+		botaoConectar.setOpaque(false);
+		botaoConectar.setContentAreaFilled(false);
+		botaoConectar.setBorderPainted(false);
+		botaoConectar.setIcon(new ImageIcon(getClass().getResource("/botaoConectar.png")));
+		botaoConectar.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoConectar.setIcon(new ImageIcon(getClass().getResource("/botaoConectarMouseEntered.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoConectar.setIcon(new ImageIcon(getClass().getResource("/botaoConectar.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		botaoConectar.setVisible(false);
+	}
+	
+	public void setarBotaoSair() {
+		botaoSair = new JButton("");
+		botaoSair.setBounds(22, 78, 205, 48);
+		botaoSair.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				janela.dispatchEvent(new WindowEvent(janela, WindowEvent.WINDOW_CLOSING));
+			}
+		});
+		painelBotoes.add(botaoSair);
+		botaoSair.setOpaque(false);
+		botaoSair.setContentAreaFilled(false);
+		botaoSair.setBorderPainted(false);
+		botaoSair.setIcon(new ImageIcon(getClass().getResource("/botaoSair.png")));
+		botaoSair.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoSair.setIcon(new ImageIcon(getClass().getResource("/botaoSairMouseEntered.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoSair.setIcon(new ImageIcon(getClass().getResource("/botaoSair.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		botaoSair.setVisible(false);
+	}
+	
+	public void setarBotaoAjuda() {
+		botaoAjuda = new JButton("");
+		botaoAjuda.setBounds(22, 146, 205, 48);
+		botaoAjuda.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// DISPLAY JANELA AJUDA
+			}
+		});
+		painelBotoes.add(botaoAjuda);
+		botaoAjuda.setOpaque(false);
+		botaoAjuda.setContentAreaFilled(false);
+		botaoAjuda.setBorderPainted(false);
+		botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/botaoAjuda.png")));
+		botaoAjuda.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/botaoAjudaMouseEntered.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/botaoAjuda.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		botaoAjuda.setVisible(false);
 	}
 
 }

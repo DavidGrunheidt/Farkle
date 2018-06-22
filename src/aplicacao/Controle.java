@@ -137,7 +137,7 @@ public class Controle {
 	}
 
 	public void prepararParaVotos(int meuID) {
-		mesaJogo = new Mesa(rede.getListaOrdenadaJogadores());
+		mesaJogo = new Mesa(rede.getListaOrdenadaJogadores(), rede.getMeuNome(), meuID);
 		lanceFactory = new LanceFactory(mesaJogo.numJogadores());
 		this.meuID = meuID;
 		idPlayerDaVez = 0;

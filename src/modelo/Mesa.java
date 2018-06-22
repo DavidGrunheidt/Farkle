@@ -14,12 +14,20 @@ public class Mesa {
 	protected int contVotos;
 	protected int levelVotos;
 	
-	public Mesa(List<String> listaJogadores) {
+	public Mesa(List<String> listaJogadores, String meuNome, int meuID) {
 		this.listaJogadores = new HashMap<Integer, Jogador>();
 		contVotos = 0;
 		levelVotos = 0;
-		for (int i = 0; i < listaJogadores.size(); i++) {
-			Jogador jogadorAux = new Jogador(i ,listaJogadores.get(i));
+		Jogador jogadorAux;
+		for (int i = 0; i <= meuID; i++) {
+			if (i != meuID) 
+				jogadorAux = new Jogador(i ,listaJogadores.get(i));
+			else
+				jogadorAux = new Jogador(meuID , meuNome);
+			this.listaJogadores.put(i, jogadorAux);	
+		}
+		for (int i = meuID+1; i < listaJogadores.size()+1; i++) {
+			jogadorAux = new Jogador(i,listaJogadores.get(i-1));
 			this.listaJogadores.put(i, jogadorAux);
 		}
 	}
@@ -30,7 +38,7 @@ public class Mesa {
 	}
 
 	public int numJogadores() {
-		return listaJogadores.size()+1;
+		return listaJogadores.size();
 	}
 	
 	public int VerificaFarkled(int[] valores, int meuID) {

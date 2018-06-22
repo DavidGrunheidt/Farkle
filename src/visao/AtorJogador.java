@@ -26,7 +26,6 @@ import jogadas.LanceDadoSelecionado;
 import jogadas.LanceFinal;
 import jogadas.LanceRoll;
 import jogadas.LanceRoundFinalizado;
-import jogadas.LanceVotarNivel;
 import modelo.Dado;
 
 public class AtorJogador {
@@ -257,12 +256,13 @@ public class AtorJogador {
 		int tipoLance = controle.atualizarDevidoRecebimento(jogada);
 		switch(tipoLance) {
 		case 0:
-			boolean minhaVez = controle.verificarSeMinhaVez();
-			if (minhaVez)
-				this.votarNivel();
 			boolean todosVotaram = controle.verificaTodosVotaram();
-			if (todosVotaram)
+			boolean minhaVez = controle.verificarSeMinhaVez();
+			if (todosVotaram) {
 				this.comecarPartida();
+			} else if (!todosVotaram && minhaVez) {
+				this.votarNivel();
+			}
 			break;
 		case 1:
 			Dado[] dados = ((LanceRoll)jogada).getDados().clone();
@@ -310,8 +310,7 @@ public class AtorJogador {
 	}
 
 	public void desabilitarInterfaceGraficaEsperandoAllVotos() {
-		// TODO - implement AtorJogador.desabilitarInterfaceGraficaEsperandoAllVotos
-		throw new UnsupportedOperationException();
+		painelVotarNivel.setVisible(false);
 	}
 
 	public void habilitarInterfaceGraficaPartidaEmAndamento() {
@@ -406,6 +405,8 @@ public class AtorJogador {
 					labelInformaVotar.setIcon(new ImageIcon(getClass().getResource("/AguardeTodos.png")));
 					selecaoNivel.setVisible(false);
 					controle.nivelSelecionado(nivelSelect);
+					if (controle.verificaTodosVotaram())
+						comecarPartida();
 			}
 		});
 	}

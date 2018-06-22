@@ -69,6 +69,10 @@ public class AtorNetGames implements OuvidorProxy {
 	public List<String> getListaOrdenadaJogadores() {
 		return proxy.obterNomeAdversarios();
 	}
+	
+	public String getMeuNome() {
+		return proxy.getNomeJogador();
+	}
 
 	public void finalizarPartida() {
 		try {

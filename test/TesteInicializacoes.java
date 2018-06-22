@@ -15,10 +15,9 @@ public class TesteInicializacoes {
 	@Before
 	public void inicializaMesa() {
 		ArrayList<String> listaJogadores = new ArrayList<String>();
-		listaJogadores.add("David");
 		listaJogadores.add("Joao");
 		listaJogadores.add("Luiz");
-		mesaJogo = new Mesa((List<String>)listaJogadores);
+		mesaJogo = new Mesa((List<String>)listaJogadores, "David", 0);
 	}
 
 	@Test

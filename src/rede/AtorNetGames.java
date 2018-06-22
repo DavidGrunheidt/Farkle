@@ -26,22 +26,19 @@ public class AtorNetGames implements OuvidorProxy {
 		proxy.addOuvinte(this);
 	}
 
-	public boolean conectar(String servidor, String nome) {
+	public boolean conectar(String servidor, String nome) throws JahConectadoException, NaoPossivelConectarException, ArquivoMultiplayerException  {
 		boolean conectar = true;
 		try {
 			proxy.conectar(servidor, nome);
 		} catch (JahConectadoException e) {
 			conectar = false;
-			JOptionPane.showMessageDialog(atorJogador.getJanela(), e.getMessage());
-			e.printStackTrace();
+			throw e;
 		} catch (NaoPossivelConectarException e) {
 			conectar = false;
-			JOptionPane.showMessageDialog(atorJogador.getJanela(), e.getMessage());
-			e.printStackTrace();
+			throw e;
 		} catch (ArquivoMultiplayerException e) {
 			conectar = false;
-			JOptionPane.showMessageDialog(atorJogador.getJanela(), e.getMessage());
-			e.printStackTrace();
+			throw e;
 		}
 		return conectar;
 	}

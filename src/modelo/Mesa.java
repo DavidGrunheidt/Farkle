@@ -2,6 +2,8 @@ package modelo;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import aplicacao.Level;
 import factorys.LevelFactory;
 
@@ -28,7 +30,7 @@ public class Mesa {
 	}
 
 	public int numJogadores() {
-		return listaJogadores.size();
+		return listaJogadores.size()+1;
 	}
 	
 	public int VerificaFarkled(int[] valores, int meuID) {

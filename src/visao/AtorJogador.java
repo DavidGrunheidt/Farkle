@@ -8,14 +8,19 @@ import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import aplicacao.Controle;
+import br.ufsc.inf.leobr.cliente.exception.ArquivoMultiplayerException;
+import br.ufsc.inf.leobr.cliente.exception.JahConectadoException;
 import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
+import br.ufsc.inf.leobr.cliente.exception.NaoPossivelConectarException;
 import jogadas.Lance;
 import jogadas.LanceDadoSelecionado;
 import jogadas.LanceFinal;
@@ -27,17 +32,16 @@ import modelo.Dado;
 public class AtorJogador {
 
 	protected Controle controle;
-	protected static AtorJogador instanciaUnica;
 	
 	protected JFrame janela, janelaAjuda;
 	protected JPanel painelAjuda, painelBotoes;
 	protected JPanel painelVotarNivel, painelPontuacoes, painelJogadorDaVez;
 	protected JPanel painelOpcoesDurantePartida, painelDosDados;
 	protected JTextField nome, quantJog;
-	protected JButton botaoAjuda, botaoConectar, botaoSair, botaoCriarNovoJogo;
-	protected JButton botaoDesconectar, botaoVotar, botaoRoll, botaoBank, botaoAbandonarJogo;
+	protected JButton botaoAjuda, botaoConectar, botaoSair, botaoNovoJogo;
+	protected JButton botaoVotar, botaoRoll, botaoBank, botaoAbandonarJogo;
 	protected LinkedList<JButton>dadosLivresPlayerDavez;
-	protected JLabel labelAjuda, labelLogo;
+	protected JLabel labelAjuda, labelLogo, labelInformaVotar;
 	protected LinkedList<JLabel> dadosLivresPlayerEsperando, dadosSetAside, labelJogadores, labelPontuacoes;
 	
 	public AtorJogador() {
@@ -48,6 +52,9 @@ public class AtorJogador {
 		setarBotaoConectar();
 		setarBotaoSair();
 		setarBotaoAjuda();
+		setarBotaoNovoJogo();
+		setarPainelVotarNivel();
+		setarLabelInformaVotar();
 	}
 
 	public void atualizarInterfaceGrafica(int farkledType) {
@@ -56,31 +63,67 @@ public class AtorJogador {
 	}
 
 	public void clickConectar() {
-		String nome = null, servidor = null;
+		String nome = JOptionPane.showInputDialog("Informe seu nome");
+		String servidor = JOptionPane.showInputDialog("Informe o ip do servidor que deseja conectar");
 		////////////////////////
-		boolean conectar = controle.clickConectar(nome, servidor);
+		boolean conectar = false;
+		try {
+			conectar = controle.clickConectar(nome, servidor);
+		} catch (JahConectadoException e) {
+			JOptionPane.showMessageDialog(janela, e.getMessage());
+			e.printStackTrace();
+		} catch (NaoPossivelConectarException e) {
+			JOptionPane.showMessageDialog(janela, e.getMessage());
+			e.printStackTrace();
+		} catch (ArquivoMultiplayerException e) {
+			JOptionPane.showMessageDialog(janela, e.getMessage());
+			e.printStackTrace();
+		}
 		
 		if (conectar) {
 			this.desabilitarInterfaceGraficaNotConectado();
 			this.habilitarInterfaceGraficaConectado();
-		} else {
-			////////////////
 		}
 	}
 
 	public void clickIniciarNovoJogo() {
 		boolean conectado = controle.verificaSeConectado();
 		if (conectado) {
-			int numJogadores = 0;
-			//// Label pra selecionar num de jogadores////
-			//////////////////////
-			try {
-				controle.iniciarPartida(numJogadores);
-			} catch (NaoConectadoException e) {
-				/// Error Nao Conectado /// 
-			}
+			botaoNovoJogo.setVisible(false);
+			JLabel titulo = new JLabel();
+			painelBotoes.add(titulo);
+			titulo.setBounds(22, 5, 205, 28);
+			titulo.setIcon(new ImageIcon(getClass().getResource("/tituloInformeNumDeJog.png")));
+			JComboBox<String> caixaSelecao = new JComboBox<String>();
+			painelBotoes.add(caixaSelecao);
+			caixaSelecao.setBounds(22, 35, 205, 28);
+			caixaSelecao.addItem("2 Jogadores");
+			caixaSelecao.addItem("3 Jogadores");
+			caixaSelecao.addItem("4 Jogadores");
+			((JLabel)caixaSelecao.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+			caixaSelecao.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent evnt) {
+					String event = evnt.getSource().toString();
+					int numJog = 0;
+					if (event.contains("2 Jogadores")) {
+						numJog = 2;
+					} else if (event.contains("3 Jogadores")) {
+						numJog = 3;
+					} else if (event.contains("4 Jogadores")) {
+						numJog = 4;
+					}
+					if (numJog >= 2) {
+						try {
+							controle.iniciarPartida(numJog);
+						} catch (NaoConectadoException e) {
+							JOptionPane.showMessageDialog(null, "Ocorreu algum erro de conexão e você\nnão está mais conectado para realizar esta ação", "Alerta!!", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			});
 		} else {
-			//////////////////
+			JOptionPane.showMessageDialog(null, "É preciso estar conectado para realizar esta ação", "Alerta!!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -148,13 +191,13 @@ public class AtorJogador {
 	}
 
 	public void habilitarInterfaceGraficaConectado() {
-		botaoCriarNovoJogo.setVisible(true);
-		botaoDesconectar.setVisible(true);
+		botaoNovoJogo.setVisible(true);
+		if (!painelBotoes.isVisible())
+			painelBotoes.setVisible(true);
 	}
 
 	public void desabilitarInterfaceGraficaNotConectado() {
 		botaoConectar.setVisible(false);
-		botaoSair.setVisible(false);
 	}
 
 	public void mostrarPopUpJanelaAjuda() {
@@ -183,8 +226,7 @@ public class AtorJogador {
 	}
 
 	public void desabilitarInterfaceGraficaConectado() {
-		// TODO - implement AtorJogador.desabilitarInterfaceGraficaConectado
-		throw new UnsupportedOperationException();
+		painelBotoes.setVisible(false);
 	}
 
 	public void habilitarBotaoRoll() {
@@ -202,27 +244,19 @@ public class AtorJogador {
 		throw new UnsupportedOperationException();
 	}
 
-	public int habilitarInterfaceGraficaRealizarVotacao() {
-		// TODO - implement AtorJogador.habilitarInterfaceGraficaRealizarVotacao
-		throw new UnsupportedOperationException();
-	}
-
 	public void desabilitarBotaoRoll() {
 		// TODO - implement AtorJogador.desabilitarBotaoRoll
 		throw new UnsupportedOperationException();
 	}
 
 	public void habilitarInterfaceGraficaEsperandoAllVotos() {
-		// TODO - implement AtorJogador.habilitarInterfaceGraficaEsperandoAllVotos
-		throw new UnsupportedOperationException();
+		painelVotarNivel.setVisible(true);
 	}
 
 	public void atualizarDevidoRecebimento(Lance jogada) {
 		int tipoLance = controle.atualizarDevidoRecebimento(jogada);
 		switch(tipoLance) {
 		case 0:
-			int levelVoted = ((LanceVotarNivel)jogada).getLevelVoted();
-			this.atualizarVotos(levelVoted);
 			boolean minhaVez = controle.verificarSeMinhaVez();
 			if (minhaVez)
 				this.votarNivel();
@@ -348,15 +382,32 @@ public class AtorJogador {
 		controle.finalizarPartida();
 	}
 
-	public void atualizarVotos(int levelVoted) {
-		// TODO - implement AtorJogador.atualizarVotos
-		throw new UnsupportedOperationException();
-	}
-
 	public void votarNivel() {
-		int nivel = this.habilitarInterfaceGraficaRealizarVotacao();
-		controle.nivelSelecionado(nivel);
-		this.desabilitarInterfaceRealizarVotacao();
+		labelInformaVotar.setIcon(new ImageIcon(getClass().getResource("/SuaVezDeVotar.png")));
+		JComboBox<String> selecaoNivel = new JComboBox<String>();
+		selecaoNivel.setBounds(168, 54, 93, 20);
+		painelVotarNivel.add(selecaoNivel);
+		selecaoNivel.addItem("Nivel facil");
+		selecaoNivel.addItem("Nivel médio");
+		selecaoNivel.addItem("Nivel dificil");
+		((JLabel)selecaoNivel.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+		selecaoNivel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					String event = e.getSource().toString();
+					int nivelSelect;
+					if (event.contains("Nivel facil")) {
+						nivelSelect = 0;
+					} else if (event.contains("Nivel médio")) {
+						nivelSelect = 1;
+					} else {
+						nivelSelect = 2;
+					}
+					labelInformaVotar.setIcon(new ImageIcon(getClass().getResource("/AguardeTodos.png")));
+					selecaoNivel.setVisible(false);
+					controle.nivelSelecionado(nivelSelect);
+			}
+		});
 	}
 
 	public void comecarPartida() {
@@ -401,7 +452,7 @@ public class AtorJogador {
 		this.habilitarInterfaceGraficaEsperandoAllVotos();
 		boolean minhaVez = controle.verificarSeMinhaVez();
 		if (minhaVez)
-			this.votarNivel();
+			votarNivel();
 	}
 	
 	public void setarJanela() {
@@ -416,7 +467,7 @@ public class AtorJogador {
 	}
 	
 	public void setarLabelLogo() {
-		labelLogo = new JLabel("");
+		labelLogo = new JLabel();
 		labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
 		labelLogo.setBounds(193, 10, 248, 79);
 		janela.getContentPane().add(labelLogo);
@@ -525,6 +576,55 @@ public class AtorJogador {
 			}
 		});
 		botaoAjuda.setVisible(false);
+	}
+	
+	public void setarBotaoNovoJogo() {
+		botaoNovoJogo = new JButton("");
+		botaoNovoJogo.setBounds(22, 10, 205, 48);
+		botaoNovoJogo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				clickIniciarNovoJogo();
+			}
+		});
+		painelBotoes.add(botaoNovoJogo);
+		botaoNovoJogo.setOpaque(false);
+		botaoNovoJogo.setContentAreaFilled(false);
+		botaoNovoJogo.setBorderPainted(false);
+		botaoNovoJogo.setIcon(new ImageIcon(getClass().getResource("/botaoNovoJogo.png")));
+		botaoNovoJogo.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoNovoJogo.setIcon(new ImageIcon(getClass().getResource("/botaoNovoJogoMouseEntered.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoNovoJogo.setIcon(new ImageIcon(getClass().getResource("/botaoNovoJogo.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		botaoNovoJogo.setVisible(false);
+	}
+	
+	public void setarPainelVotarNivel() {
+		painelVotarNivel = new JPanel();
+		painelVotarNivel.setBounds(116, 92, 434, 91);
+		janela.getContentPane().add(painelVotarNivel);
+		painelVotarNivel.setOpaque(false);
+		painelVotarNivel.setLayout(null);
+		painelVotarNivel.setVisible(false);
+	}
+	
+	public void setarLabelInformaVotar() {
+		labelInformaVotar = new JLabel();
+		labelInformaVotar.setHorizontalAlignment(SwingConstants.CENTER);
+		labelInformaVotar.setBounds(0, 0, 434, 43);
+		painelVotarNivel.add(labelInformaVotar);
+		labelInformaVotar.setIcon(new ImageIcon(getClass().getResource("/AguardeSuaVez.png")));
 	}
 
 }

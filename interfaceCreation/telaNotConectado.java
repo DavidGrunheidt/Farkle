@@ -1,13 +1,15 @@
 import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JOptionPane;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 
 public class telaNotConectado {
 
@@ -40,97 +42,49 @@ public class telaNotConectado {
 	 * Initialize the contents of the janela.
 	 */
 	private void initialize() {
-		JPanel painelNotConectado = new JPanel();
-		painelNotConectado.setBounds(193, 112, 248, 210);
-		janela.getContentPane().add(painelNotConectado);
-		painelNotConectado.setOpaque(false);
-		painelNotConectado.setLayout(null);
+		janela = new JFrame();
+		janela.setBounds(100, 100, 641, 401);
+
+		janela.getContentPane().setLayout(null);
+		janela.setVisible(true);
 		
-		JButton botaoConectar = new JButton("");
-		botaoConectar.setBounds(28, 10, 205, 48);
-		botaoConectar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "alert", "alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
-		painelNotConectado.add(botaoConectar);
-		botaoConectar.setOpaque(false);
-		botaoConectar.setContentAreaFilled(false);
-		botaoConectar.setBorderPainted(false);
-		botaoConectar.setIcon(new ImageIcon(getClass().getResource("/botaoConectar.png")));
-		botaoConectar.addMouseListener(new MouseListener( ) {
-			public void mouseClicked(MouseEvent arg0) {
-			}
-			public void mouseEntered(MouseEvent arg0) {
-				botaoConectar.setIcon(new ImageIcon(getClass().getResource("/botaoConectarMouseEntered.png")));
-			}
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				botaoConectar.setIcon(new ImageIcon(getClass().getResource("/botaoConectar.png")));
-			}
-			public void mousePressed(MouseEvent arg0) {
-			}
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-		});
+		JLabel labelLogo = new JLabel("");
+		labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
+		labelLogo.setBounds(193, 10, 248, 79);
+		janela.getContentPane().add(labelLogo);
+		labelLogo.setIcon(new ImageIcon(getClass().getResource("/logo.png")));
 		
-		JButton botaoSair = new JButton("");
-		botaoSair.setBounds(28, 78, 205, 48);
-		botaoSair.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "alert", "alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
-		painelNotConectado.add(botaoSair);
-		botaoSair.setOpaque(false);
-		botaoSair.setContentAreaFilled(false);
-		botaoSair.setBorderPainted(false);
-		botaoSair.setIcon(new ImageIcon(getClass().getResource("/botaoSair.png")));
-		botaoSair.addMouseListener(new MouseListener( ) {
-			public void mouseClicked(MouseEvent arg0) {
-			}
-			public void mouseEntered(MouseEvent arg0) {
-				botaoSair.setIcon(new ImageIcon(getClass().getResource("/botaoSairMouseEntered.png")));
-			}
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				botaoSair.setIcon(new ImageIcon(getClass().getResource("/botaoSair.png")));
-			}
-			public void mousePressed(MouseEvent arg0) {
-			}
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-		});
+		JPanel painelVotarNivel = new JPanel();
+		painelVotarNivel.setBounds(116, 92, 434, 91);
+		janela.getContentPane().add(painelVotarNivel);
+		painelVotarNivel.setLayout(null);
 		
+		JLabel labelInformaVotar = new JLabel("");
+		labelInformaVotar.setHorizontalAlignment(SwingConstants.CENTER);
+		labelInformaVotar.setBounds(0, 0, 434, 43);
+		painelVotarNivel.add(labelInformaVotar);
+		labelInformaVotar.setIcon(new ImageIcon(getClass().getResource("/AguardeSuaVez.png")));
 		
-		JButton botaoAjuda = new JButton("");
-		botaoAjuda.setBounds(28, 146, 205, 48);
-		botaoAjuda.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "alert", "alert", JOptionPane.ERROR_MESSAGE);
-			}
-		});
-		painelNotConectado.add(botaoAjuda);
-		botaoAjuda.setOpaque(false);
-		botaoAjuda.setContentAreaFilled(false);
-		botaoAjuda.setBorderPainted(false);
-		botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/botaoAjuda.png")));
-		botaoAjuda.addMouseListener(new MouseListener( ) {
-			public void mouseClicked(MouseEvent arg0) {
-			}
-			public void mouseEntered(MouseEvent arg0) {
-				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/botaoAjudaMouseEntered.png")));
-			}
+		JComboBox<String> selecaoNivel = new JComboBox<String>();
+		selecaoNivel.setBounds(168, 54, 93, 20);
+		painelVotarNivel.add(selecaoNivel);
+		selecaoNivel.addItem("Nivel facil");
+		selecaoNivel.addItem("Nivel médio");
+		selecaoNivel.addItem("Nivel dificil");
+		((JLabel)selecaoNivel.getRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+		selecaoNivel.addActionListener(new ActionListener() {
 			@Override
-			public void mouseExited(MouseEvent arg0) {
-				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/botaoAjuda.png")));
-			}
-			public void mousePressed(MouseEvent arg0) {
-			}
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
+					int nivel = 0;
+					String event = e.getSource().toString();
+					if (event.contains("Nivel facil")) {
+						nivel = 0;
+					} else if (event.contains("Nivel médio")) {
+						nivel = 1;
+					} else if (event.contains("Nivel dificil")) {
+						nivel = 2;
+					}
+					System.out.println("Nivel = "+nivel);
 			}
 		});
 	}

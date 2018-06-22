@@ -1,6 +1,11 @@
 package aplicacao;
 
+import javax.swing.JOptionPane;
+
+import br.ufsc.inf.leobr.cliente.exception.ArquivoMultiplayerException;
+import br.ufsc.inf.leobr.cliente.exception.JahConectadoException;
 import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
+import br.ufsc.inf.leobr.cliente.exception.NaoPossivelConectarException;
 import factorys.LanceFactory;
 import modelo.Dado;
 import modelo.Jogador;
@@ -22,7 +27,7 @@ public class Controle {
 	protected int meuID;
 	protected int idPlayerDaVez;
 	protected boolean conectado;
-	protected static LanceFactory lanceFactory;
+	protected LanceFactory lanceFactory;
 	
 	public Controle(AtorJogador atorJogador) {
 		rede = new AtorNetGames(atorJogador);
@@ -32,6 +37,7 @@ public class Controle {
 		mesaJogo.contabilizarVotoNivel(nivel);
 		Lance lance = lanceFactory.criarLance(0, meuID);
 		((LanceVotarNivel)lance).setLevelVoted(nivel);
+		idPlayerDaVez = (meuID + 1) % mesaJogo.numJogadores();
 		rede.enviarJogada(lance);
 	}
 
@@ -73,8 +79,8 @@ public class Controle {
 		return valores;
 	}
 
-	public boolean clickConectar(String nome, String servidor) {
-		boolean conectado = rede.conectar(servidor, nome);
+	public boolean clickConectar(String nome, String servidor) throws JahConectadoException, NaoPossivelConectarException, ArquivoMultiplayerException {
+		conectado = rede.conectar(servidor, nome);
 		return conectado;
 	}
 
@@ -83,6 +89,7 @@ public class Controle {
 		message.concat(meuNome);
 		message.concat(" abandonou o jogo");
 		rede.desconectar(message);
+		conectado = false;
 	}
 
 	public int clickBank() {
@@ -126,11 +133,12 @@ public class Controle {
 	}
 
 	public void iniciarPartida(int numJogadores) throws NaoConectadoException {
-			rede.iniciarPartida(numJogadores);
+		rede.iniciarPartida(numJogadores);
 	}
 
 	public void prepararParaVotos(int meuID) {
 		mesaJogo = new Mesa(rede.getListaOrdenadaJogadores());
+		lanceFactory = new LanceFactory(mesaJogo.numJogadores());
 		this.meuID = meuID;
 		idPlayerDaVez = 0;
 	}

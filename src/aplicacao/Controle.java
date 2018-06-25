@@ -1,7 +1,5 @@
 package aplicacao;
 
-import javax.swing.JOptionPane;
-
 import br.ufsc.inf.leobr.cliente.exception.ArquivoMultiplayerException;
 import br.ufsc.inf.leobr.cliente.exception.JahConectadoException;
 import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
@@ -42,8 +40,10 @@ public class Controle {
 	}
 
 	public void clickSairJogo() {
-		// TODO - implement Controle.clickSairJogo
-		throw new UnsupportedOperationException();
+		if (conectado) {
+			rede.desconectar();
+			conectado = false;
+		}
 	}
 
 	public int[] clickRoll() {
@@ -80,16 +80,9 @@ public class Controle {
 	}
 
 	public boolean clickConectar(String nome, String servidor) throws JahConectadoException, NaoPossivelConectarException, ArquivoMultiplayerException {
+		meuNome = nome;
 		conectado = rede.conectar(servidor, nome);
 		return conectado;
-	}
-
-	public void clickAbandonarJogo() {
-		String message = "Jogador = ";
-		message.concat(meuNome);
-		message.concat(" abandonou o jogo");
-		rede.desconectar(message);
-		conectado = false;
 	}
 
 	public int clickBank() {
@@ -124,8 +117,8 @@ public class Controle {
 		mesaJogo.liberarDados();
 	}
 
-	public void comecarPartida() {
-		mesaJogo.comecarPartida();
+	public String comecarPartida() {
+		return mesaJogo.comecarPartida(idPlayerDaVez);
 	}
 
 	public boolean verificaSeConectado() {
@@ -203,6 +196,10 @@ public class Controle {
 	
 	public int getMeuID() {
 		return meuID;
+	}
+	
+	public String[] getListaJogadores() {
+		return mesaJogo.pegarNomeJogadores();
 	}
 
 }

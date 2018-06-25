@@ -43,8 +43,7 @@ public class AtorNetGames implements OuvidorProxy {
 		return conectar;
 	}
 
-	public void desconectar(String message) {
-		finalizarPartidaComErro(message);
+	public void desconectar() {
 		try {
 			proxy.desconectar();
 		} catch (NaoConectadoException e) {
@@ -86,10 +85,6 @@ public class AtorNetGames implements OuvidorProxy {
 		}
 	}
 
-	public void finalizarPartidaComErro(String message) {
-		proxy.finalizarPartidaComErro(message);
-	}
-
 	@Override
 	public void iniciarNovaPartida(Integer posicao) {
 		atorJogador.receberSolicitacaoInicio(posicao);	
@@ -110,6 +105,15 @@ public class AtorNetGames implements OuvidorProxy {
 
 	@Override
 	public void tratarPartidaNaoIniciada(String message) {
+	}
+
+	@Override
+	public void finalizarPartidaComErro(String message) {
+		JOptionPane.showMessageDialog(null, "Partida cancelada pois um jogador abandonou!", "Alerta!!", JOptionPane.ERROR_MESSAGE);
+		atorJogador.desabilitarInterfaceGraficaPartidaEmAndamento();
+		atorJogador.habilitarInterfaceGraficaNotConectado();
+		atorJogador.desabilitarInterfaceGraficaNotConectado();
+		atorJogador.habilitarInterfaceGraficaConectado();
 	}
 
 }

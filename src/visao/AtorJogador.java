@@ -1,9 +1,12 @@
 package visao;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -40,25 +43,36 @@ public class AtorJogador {
 	protected JButton botaoAjuda, botaoConectar, botaoSair, botaoNovoJogo;
 	protected JButton botaoVotar, botaoRoll, botaoBank, botaoAbandonarJogo;
 	protected LinkedList<JButton>dadosLivresPlayerDavez;
-	protected JLabel labelAjuda, labelLogo, labelInformaVotar;
-	protected LinkedList<JLabel> dadosLivresPlayerEsperando, dadosSetAside, labelJogadores, labelPontuacoes;
+	protected JLabel labelAjuda, labelLogo, labelInformaVotar, labelPlayerDaVez, labelPontRoundDaVez;
+	protected LinkedList<JLabel> dadosLivresPlayerEsperando, dadosSetAside;
+	protected JLabel[] labelJogadores, labelPontuacoes;
 	
 	public AtorJogador() {
 		controle = new Controle(this);
 		setarJanela();
 		setarLabelLogo();
-		setarPainelBotoes();
-		setarBotaoConectar();
-		setarBotaoSair();
-		setarBotaoAjuda();
-		setarBotaoNovoJogo();
-		setarPainelVotarNivel();
-		setarLabelInformaVotar();
 	}
 
 	public void atualizarInterfaceGrafica(int farkledType) {
-		// TODO - implement AtorJogador.atualizarInterfaceGrafica
-		throw new UnsupportedOperationException();
+		controle.mudouVez();
+		this.colocar
+		
+		if (minhaVez) {
+			this.habilitarBotaoBank();
+			this.habilitarBotaoRoll();
+		} else {
+			if (controle.verificaSeFoiUltimo()) {
+				this.desabilitarBotaoBank();
+				this.desabilitarBotaoRoll();
+			}
+		}
+		
+		if (farkledType == -1) {
+			JOptionPane.showMessageDialog(null, "Ultimo jogador deu farkled e perdeu a vez", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+		} else if (farkledType == -2) {
+			JOptionPane.showMessageDialog(null, "Ultimo jogador deu ThreeFarkled, perdeu pontuacao e a vez", "Atenção!!", JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
 	public void clickConectar() {
@@ -132,14 +146,18 @@ public class AtorJogador {
 
 	public void selecionarNivel(int nivel) {
 		controle.nivelSelecionado(nivel);
-		this.desabilitarInterfaceRealizarVotacao();
 	}
 
 	public void clickRoll() {
 		if (this.setAside(true)) {
 			int[] valores = controle.clickRoll().clone();
-			if (valores[0] < 0)
+			JOptionPane.showMessageDialog(null, "Valor = "+valores[0], "Alerta!!", JOptionPane.ERROR_MESSAGE);
+			if (valores[0] < 0) {
 				this.atualizarInterfaceGrafica(valores[0]);
+			} else {
+				for (int i = 0; i < valores.length; i++)
+					this.colocarDadoNaAreaLivres(i, valores[i]);
+			}
 		}
 	}
 
@@ -173,8 +191,7 @@ public class AtorJogador {
 	}
 
 	public void clickAbandonarJogo() {
-		// TODO - implement AtorJogador.clickAbandonarJogo
-		throw new UnsupportedOperationException();
+		controle.finalizarPartida();
 	}
 
 	public void clickSairJogo() {
@@ -184,13 +201,8 @@ public class AtorJogador {
 			controle.clickSairJogo();
 	}
 
-	public void desabilitarInterfaceRealizarVotacao() {
-		// TODO - implement AtorJogador.desabilitarInterfaceRealizarVotacao
-		throw new UnsupportedOperationException();
-	}
-
 	public void habilitarInterfaceGraficaConectado() {
-		botaoNovoJogo.setVisible(true);
+		setarBotaoNovoJogo();
 		if (!painelBotoes.isVisible())
 			painelBotoes.setVisible(true);
 	}
@@ -210,13 +222,18 @@ public class AtorJogador {
 	}
 
 	public void desabilitarInterfaceGraficaPartidaEmAndamento() {
-		// TODO - implement AtorJogador.desabilitarInterfaceGraficaPartidaEmAndamento
-		throw new UnsupportedOperationException();
+		painelPontuacoes.removeAll();
+		painelPontuacoes.setVisible(false);
+		painelJogadorDaVez.removeAll();
+		painelJogadorDaVez.setVisible(false);
+		painelOpcoesDurantePartida.removeAll();
+		painelOpcoesDurantePartida.setVisible(false);
+		//painelDosDados.removeAll();
+		//painelDosDados.setVisible(false);
 	}
 
 	public void desabilitarBotaoBank() {
-		// TODO - implement AtorJogador.desabilitarBotaoBank
-		throw new UnsupportedOperationException();
+		botaoBank.setVisible(false);
 	}
 
 	public void habilitarSelecaoDeDados() {
@@ -229,8 +246,7 @@ public class AtorJogador {
 	}
 
 	public void habilitarBotaoRoll() {
-		// TODO - implement AtorJogador.habilitarBotaoRoll
-		throw new UnsupportedOperationException();
+		botaoRoll.setVisible(true);
 	}
 
 	public void desabilitarSelecaoDeDados() {
@@ -239,16 +255,16 @@ public class AtorJogador {
 	}
 
 	public void habilitarBotaoBank() {
-		// TODO - implement AtorJogador.habilitarBotaoBank
-		throw new UnsupportedOperationException();
+		botaoBank.setVisible(true);
 	}
 
 	public void desabilitarBotaoRoll() {
-		// TODO - implement AtorJogador.desabilitarBotaoRoll
-		throw new UnsupportedOperationException();
+		botaoRoll.setVisible(false);
 	}
 
 	public void habilitarInterfaceGraficaEsperandoAllVotos() {
+		setarPainelVotarNivel();
+		setarLabelInformaVotar();
 		painelVotarNivel.setVisible(true);
 	}
 
@@ -311,11 +327,14 @@ public class AtorJogador {
 
 	public void desabilitarInterfaceGraficaEsperandoAllVotos() {
 		painelVotarNivel.setVisible(false);
+		painelVotarNivel.removeAll();
+		janela.remove(painelVotarNivel);
 	}
 
-	public void habilitarInterfaceGraficaPartidaEmAndamento() {
-		// TODO - implement AtorJogador.habilitarInterfaceGraficaPartidaEmAndamento
-		throw new UnsupportedOperationException();
+	public void habilitarInterfaceGraficaPartidaEmAndamento(String nomeDaVez, String[] listaJogadores) {
+		this.setarPainelJogadorDaVez(nomeDaVez);
+		this.setarPainelOpcoesDurantePartida();
+		this.setarPainelPontuacoes(listaJogadores);
 	}
 
 	public void mostrarVoto(int playerQueVotou, int levelVotado) {
@@ -356,6 +375,7 @@ public class AtorJogador {
 	public boolean setAside(boolean veioDoRoll) {
 		boolean resp = true;
 		int continuar = controle.setAside(veioDoRoll);
+		JOptionPane.showMessageDialog(null, "Continuar = "+continuar, "Alerta!!", JOptionPane.ERROR_MESSAGE);
 		if(continuar == 0) {
 			this.informarDadosNaoValidos();
 			resp = false;
@@ -371,9 +391,13 @@ public class AtorJogador {
 	}
 
 	public void habilitarInterfaceGraficaNotConectado() {
-		botaoConectar.setVisible(true);
-		botaoSair.setVisible(true);
-		botaoAjuda.setVisible(true);
+		setarPainelBotoes();
+		setarBotaoConectar();
+		setarBotaoSair();
+		setarBotaoAjuda();
+		
+		janela.validate();
+		janela.repaint();
 	}
 
 
@@ -412,9 +436,9 @@ public class AtorJogador {
 	}
 
 	public void comecarPartida() {
-		controle.comecarPartida();
+		String nomeDaVez = controle.comecarPartida();
 		this.desabilitarInterfaceGraficaEsperandoAllVotos();
-		this.habilitarInterfaceGraficaPartidaEmAndamento();
+		this.habilitarInterfaceGraficaPartidaEmAndamento(nomeDaVez, controle.getListaJogadores().clone());
 		this.atualizarInterfaceGrafica(0);
 	}
 
@@ -512,7 +536,6 @@ public class AtorJogador {
 			public void mouseReleased(MouseEvent arg0) {
 			}
 		});
-		botaoConectar.setVisible(false);
 	}
 	
 	public void setarBotaoSair() {
@@ -520,6 +543,7 @@ public class AtorJogador {
 		botaoSair.setBounds(22, 78, 205, 48);
 		botaoSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				controle.clickSairJogo();
 				janela.dispatchEvent(new WindowEvent(janela, WindowEvent.WINDOW_CLOSING));
 			}
 		});
@@ -544,7 +568,6 @@ public class AtorJogador {
 			public void mouseReleased(MouseEvent arg0) {
 			}
 		});
-		botaoSair.setVisible(false);
 	}
 	
 	public void setarBotaoAjuda() {
@@ -576,7 +599,6 @@ public class AtorJogador {
 			public void mouseReleased(MouseEvent arg0) {
 			}
 		});
-		botaoAjuda.setVisible(false);
 	}
 	
 	public void setarBotaoNovoJogo() {
@@ -608,7 +630,6 @@ public class AtorJogador {
 			public void mouseReleased(MouseEvent arg0) {
 			}
 		});
-		botaoNovoJogo.setVisible(false);
 	}
 	
 	public void setarPainelVotarNivel() {
@@ -627,5 +648,209 @@ public class AtorJogador {
 		painelVotarNivel.add(labelInformaVotar);
 		labelInformaVotar.setIcon(new ImageIcon(getClass().getResource("/AguardeSuaVez.png")));
 	}
+	
+	public void setarPainelJogadorDaVez(String nomeDaVez) {
+		painelJogadorDaVez = new JPanel();
+		painelJogadorDaVez.setBounds(157, 302, 311, 50);
+		janela.getContentPane().add(painelJogadorDaVez);
+		painelJogadorDaVez.setOpaque(false);
+		painelJogadorDaVez.setLayout(null);
+		
+		labelPlayerDaVez = new JLabel(nomeDaVez, SwingConstants.CENTER);
+		labelPlayerDaVez.setBounds(225, 0, 86, 26);
+		labelPlayerDaVez.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		labelPlayerDaVez.setForeground(Color.white);
+		painelJogadorDaVez.add(labelPlayerDaVez);
+		
+		labelPontRoundDaVez = new JLabel("0", SwingConstants.CENTER);
+		labelPontRoundDaVez.setBounds(225, 24, 86, 26);
+		labelPontRoundDaVez.setFont(new Font("Arial Black", Font.PLAIN, 18));
+		painelJogadorDaVez.add(labelPontRoundDaVez);
+		
+		JLabel labelIconPlayerDaVez = new JLabel();
+		labelIconPlayerDaVez.setBounds(0, 0, 223, 50);
+		labelIconPlayerDaVez.setIcon(new ImageIcon(getClass().getResource("/jogadorDaVez.png")));
+		painelJogadorDaVez.add(labelIconPlayerDaVez);
+		
+		JLabel backgroundPainelJogadorDaVez = new JLabel();
+		backgroundPainelJogadorDaVez.setBounds(0, 0, 311, 50);
+		backgroundPainelJogadorDaVez.setIcon(new ImageIcon(getClass().getResource("/backgroundPainelDaVez.png")));
+		painelJogadorDaVez.add(backgroundPainelJogadorDaVez);
+		janela.validate();
+		janela.repaint();
+	}
+	
+	public void setarPainelOpcoesDurantePartida() {
+		painelOpcoesDurantePartida = new JPanel();
+		painelOpcoesDurantePartida.setBounds(10, 135, 137, 217);
+		janela.getContentPane().add(painelOpcoesDurantePartida);
+		painelOpcoesDurantePartida.setOpaque(false);
+		painelOpcoesDurantePartida.setLayout(null);
+		
+		botaoAjuda.setBounds(10, 63, 117, 30);
+		painelOpcoesDurantePartida.add(botaoAjuda);
+		botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajuda2.png")));
+		botaoAjuda.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajuda2Pressed.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajuda2.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		
+		setarBotaoAbandonarJogo();
+		setarBotaoBank();
+		setarBotaoRoll();
+		
+		JLabel backgroundPainelOpcoesPartida = new JLabel();
+		backgroundPainelOpcoesPartida.setBounds(0, 0, 137, 217);
+		painelOpcoesDurantePartida.add(backgroundPainelOpcoesPartida);
+		backgroundPainelOpcoesPartida.setIcon(new ImageIcon(getClass().getResource("/backgroundPainelOpcoesPartida.png")));
+		
+		janela.validate();
+		janela.repaint();
+	}
+	
+	public void setarBotaoAbandonarJogo() {
+		botaoAbandonarJogo = new JButton();
+		botaoAbandonarJogo.setBounds(10, 11, 117, 30);
+		painelOpcoesDurantePartida.add(botaoAbandonarJogo);
+		botaoAbandonarJogo.setIcon(new ImageIcon(getClass().getResource("/abandonar.png")));
+		botaoAbandonarJogo.setOpaque(false);
+		botaoAbandonarJogo.setContentAreaFilled(false);
+		botaoAbandonarJogo.setBorderPainted(false);
+		botaoAbandonarJogo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				clickAbandonarJogo();
+			}
+		});
+		botaoAbandonarJogo.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoAbandonarJogo.setIcon(new ImageIcon(getClass().getResource("/AbandonarPressed.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoAbandonarJogo.setIcon(new ImageIcon(getClass().getResource("/abandonar.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+	}
+	
+	public void setarBotaoBank() {
+		botaoBank = new JButton();
+		botaoBank.setBounds(10, 118, 117, 30);
+		painelOpcoesDurantePartida.add(botaoBank);
+		botaoBank.setIcon(new ImageIcon(getClass().getResource("/Bank.png")));
+		botaoBank.setOpaque(false);
+		botaoBank.setContentAreaFilled(false);
+		botaoBank.setBorderPainted(false);
+		botaoBank.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
+		botaoBank.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoBank.setIcon(new ImageIcon(getClass().getResource("/bankPressed.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoBank.setIcon(new ImageIcon(getClass().getResource("/bank.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		botaoBank.setVisible(false);
+	}
+	
 
+	public void setarBotaoRoll() {
+		botaoRoll = new JButton();
+		botaoRoll.setBounds(10, 171, 117, 30);
+		painelOpcoesDurantePartida.add(botaoRoll);
+		botaoRoll.setIcon(new ImageIcon(getClass().getResource("/roll.png")));
+		botaoRoll.setOpaque(false);
+		botaoRoll.setContentAreaFilled(false);
+		botaoRoll.setBorderPainted(false);
+		botaoRoll.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				clickRoll();
+			}
+		});
+		botaoRoll.addMouseListener(new MouseListener( ) {
+			public void mouseClicked(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+				botaoRoll.setIcon(new ImageIcon(getClass().getResource("/rollPressed.png")));
+			}
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				botaoRoll.setIcon(new ImageIcon(getClass().getResource("/roll.png")));
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+			}
+		});
+		botaoRoll.setVisible(false);
+	}
+	
+	public void setarPainelPontuacoes(String[] listaJogadores) {
+		painelPontuacoes = new JPanel();
+		painelPontuacoes.setBounds(478, 10, 137, 342);
+		janela.getContentPane().add(painelPontuacoes);
+		painelPontuacoes.setOpaque(false);
+		painelPontuacoes.setLayout(null);
+		
+		setarBackgroundsPontuacao(listaJogadores); 
+		janela.validate();
+		janela.repaint();
+	}
+	
+	public void setarBackgroundsPontuacao(String[] listaJogadores) {
+		labelJogadores = new JLabel[listaJogadores.length];
+		labelPontuacoes = new JLabel[listaJogadores.length];
+		 
+		int altura = 306;
+		for (int i = 0; i < listaJogadores.length; i++) {
+			labelPontuacoes[i] = new JLabel("0");
+			labelPontuacoes[i].setBounds(10, altura, 117, 25);
+			labelPontuacoes[i].setIcon(new ImageIcon(getClass().getResource("/labelPontosJogador.png")));
+			labelPontuacoes[i].setHorizontalTextPosition(JLabel.CENTER);
+			labelPontuacoes[i].setVerticalTextPosition(JLabel.CENTER);
+			painelPontuacoes.add(labelPontuacoes[i]);
+			
+			altura -= 26;
+			
+			labelJogadores[i] = new JLabel(listaJogadores[i]);
+			labelJogadores[i].setBounds(10, altura, 117, 25);
+			labelJogadores[i].setIcon(new ImageIcon(getClass().getResource("/labelNomeJogador.png")));
+			labelJogadores[i].setHorizontalTextPosition(JLabel.CENTER);
+			labelJogadores[i].setVerticalTextPosition(JLabel.CENTER);
+			painelPontuacoes.add(labelJogadores[i]);
+			
+			altura -= 30;
+		}
+	}
 }

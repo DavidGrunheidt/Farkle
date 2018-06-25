@@ -2,7 +2,6 @@ package modelo;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 
 import aplicacao.Level;
 import factorys.LevelFactory;
@@ -13,6 +12,7 @@ public class Mesa {
 	protected Level level;
 	protected int contVotos;
 	protected int levelVotos;
+	protected boolean firstRoll;
 	
 	public Mesa(List<String> listaJogadores, String meuNome, int meuID) {
 		this.listaJogadores = new HashMap<Integer, Jogador>();
@@ -56,10 +56,11 @@ public class Mesa {
 		return farkledType;
 	}
 
-	public void comecarPartida() {
+	public String comecarPartida(int idPlayerDaVez) {
 		int nivel = (int) levelVotos/contVotos;
 		LevelFactory levelFactory = new LevelFactory(nivel);
 		level = levelFactory.getLevel();
+		return listaJogadores.get(idPlayerDaVez).getNome();
 	}
 
 	public void atualizarGrandTotalDeUmPlayer(int roundTotal, int idPlayer) {
@@ -93,6 +94,8 @@ public class Mesa {
 				level.setAsideSelecionados();
 				return 1;
 			}
+		} else if (firstRoll){
+			return 1;
 		} else {
 			return 0;
 		}
@@ -138,5 +141,12 @@ public class Mesa {
 	public boolean verificaTodosVotaram() {
 		return contVotos == listaJogadores.size();
 	}
-
+	
+	public String[] pegarNomeJogadores() {
+		String[] nomes = new String[listaJogadores.size()];
+		for (int i = 0; i < listaJogadores.size(); i++) {
+			nomes[i] = listaJogadores.get(i).getNome();
+		}
+		return nomes;
+	}
 }

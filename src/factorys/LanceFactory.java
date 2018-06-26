@@ -1,4 +1,6 @@
 package factorys;
+
+
 import javax.swing.JOptionPane;
 
 import jogadas.Lance;
@@ -33,7 +35,7 @@ public class LanceFactory {
 			break;
 		case 3:
 			lance = new LanceRoundFinalizado();
-			lance.setIdPlayerDaVez(meuID+1 % numJogDaPartida);
+			lance.setIdPlayerDaVez((meuID+1) % numJogDaPartida);
 			break;
 		case 4:
 			lance = new LanceFinal();

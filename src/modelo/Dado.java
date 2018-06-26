@@ -1,4 +1,5 @@
 package modelo;
+
 import br.ufsc.inf.leobr.cliente.Jogada;
 
 @SuppressWarnings("serial")
@@ -43,6 +44,8 @@ public class Dado implements Jogada {
 	public void liberarDado() {
 		if (setAside) 
 			setAside = false;
+		if (selecionado)
+			selecionado = false;
 		valor = 0;
 	}
 

@@ -12,9 +12,11 @@ public abstract class Level {
 	protected HashMap<String, Integer> pontuacoes;
 
 	public boolean verificaFarkled(int[] valores) {
+		
 		boolean farkled = true;
 		int[] valoresAux = sortValores(valores).clone();
 		int[] contValues = new int[6];
+		
 		
 		for (int i = 0; i < valoresAux.length; i++)
 			contValues[valoresAux[i]-1]++;
@@ -26,7 +28,9 @@ public abstract class Level {
 	}
 
 	public int[] rollDadosLivres() {
-		return gerenciadorDeDados.rollDadosLivres();
+		int [] valores = gerenciadorDeDados.rollDadosLivres();
+		gerenciadorDeDados.alinharDados();
+		return valores;
 	}
 
 
@@ -75,12 +79,17 @@ public abstract class Level {
 		return pontuacao;
 	}
 
-	public int pontuarRound() {
+	public int pontuarRound(boolean veioDoRoll, int roundTotal) {
 		int valores[] = gerenciadorDeDados.getValoresDadosSelecionados();
 		valores = sortValores(valores);
 		int pontuacao = procurarPontuacao(valores);
-		if (pontuacao > 0)
+		
+		if ((pontuacao > 0) && (!veioDoRoll)) {
+			if ((pontuacao + roundTotal) < minimoParaBank)
+				pontuacao = 0;
+		} else if ((pontuacao > 0) && (veioDoRoll)) {
 			gerenciadorDeDados.incrementarNumDeSetAsides(valores.length);
+		}
 		return pontuacao;
 	}
 
@@ -107,6 +116,29 @@ public abstract class Level {
 	
 	public HashMap<String, Integer> getPontuacoes() {
 		return this.pontuacoes;
+	}
+	
+	public int getValorDado(int idDado) {
+		return gerenciadorDeDados.getDados()[idDado].getValor();
+	}
+	
+	public void atualizarDados(Dado[] dados) {
+		gerenciadorDeDados.setDados(dados);
+	}
+	
+	public boolean verificaSelecionado(int idDado) {
+		return gerenciadorDeDados.getDados()[idDado].isSelecionado();
+	}
+	
+	public int[] getValoresLivres() {
+		int[] valoresLivres = new int[gerenciadorDeDados.getNumDadosLivres()];
+		Dado[] dados = gerenciadorDeDados.getDados().clone();
+		int count = 0;
+		for(int i = 0; i < dados.length; i++) {
+			if (!dados[i].isSetAside())
+				valoresLivres[count++] = dados[i].getValor();
+		}
+		return valoresLivres;
 	}
 
 }

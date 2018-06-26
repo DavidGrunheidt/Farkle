@@ -109,11 +109,8 @@ public class AtorNetGames implements OuvidorProxy {
 
 	@Override
 	public void finalizarPartidaComErro(String message) {
-		JOptionPane.showMessageDialog(null, "Partida cancelada pois um jogador abandonou!", "Alerta!!", JOptionPane.ERROR_MESSAGE);
-		atorJogador.desabilitarInterfaceGraficaPartidaEmAndamento();
-		atorJogador.habilitarInterfaceGraficaNotConectado();
-		atorJogador.desabilitarInterfaceGraficaNotConectado();
-		atorJogador.habilitarInterfaceGraficaConectado();
+		JOptionPane.showMessageDialog(null, "Partida cancelada pois um jogador abandonou ou houve ganhador!", "Alerta!!", JOptionPane.ERROR_MESSAGE);
+		atorJogador.voltarInterfaceConectado();
 	}
 
 }

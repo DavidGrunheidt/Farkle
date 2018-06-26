@@ -2,7 +2,6 @@ package modelo;
 import java.util.HashMap;
 import java.util.List;
 
-
 import aplicacao.Level;
 import factorys.LevelFactory;
 
@@ -18,6 +17,7 @@ public class Mesa {
 		this.listaJogadores = new HashMap<Integer, Jogador>();
 		contVotos = 0;
 		levelVotos = 0;
+		firstRoll = false;
 		Jogador jogadorAux;
 		for (int i = 0; i <= meuID; i++) {
 			if (i != meuID) 
@@ -73,7 +73,11 @@ public class Mesa {
 		return  level.rollDadosLivres();
 	}
 
-	public void liberarDados() {
+	public void liberarDados(boolean minhaVez) {
+		if (minhaVez)
+			firstRoll = true;
+		else
+			firstRoll = false;
 		level.liberarDados();
 	}
 	
@@ -81,23 +85,32 @@ public class Mesa {
 		level.selecionarDado(idDado);
 	}
 
-	public int setAside(int meuID) {
-		int pontuacao = level.pontuarRound();
-		if (pontuacao > 0) {
-			Jogador jogador = listaJogadores.get(meuID);
-			jogador.atualizarRoundTotal(pontuacao);
-			listaJogadores.replace(meuID, jogador);
-			if (level.verificaSeHotDice()) {
-				level.liberarDados();
-				return 2;
-			} else {
-				level.setAsideSelecionados();
-				return 1;
-			}
-		} else if (firstRoll){
-			return 1;
+	public int setAside(int meuID,  boolean veioDoRoll) {
+		if (firstRoll) {
+			firstRoll = false;
+			return -1;
 		} else {
-			return 0;
+			int pontuacao = level.pontuarRound(veioDoRoll, listaJogadores.get(meuID).getRoundTotal());
+			if (pontuacao > 0) {
+				Jogador jogador = listaJogadores.get(meuID);
+				jogador.atualizarRoundTotal(pontuacao);
+				listaJogadores.replace(meuID, jogador);
+				if (level.verificaSeHotDice()) {
+					level.liberarDados();
+					return 2;
+				} else {
+					level.setAsideSelecionados();
+					if (((!firstRoll) && (!veioDoRoll)))
+						return -1;
+					else
+						return 1;
+				}
+			} else {
+				if (veioDoRoll)
+					return 0;
+				else
+					return -1;
+			}
 		}
 	}
 
@@ -148,5 +161,25 @@ public class Mesa {
 			nomes[i] = listaJogadores.get(i).getNome();
 		}
 		return nomes;
+	}
+	
+	public int getNumDados() {
+		return level.getDados().length;
+	}
+	
+	public int getValorDado(int idDado) {
+		return level.getValorDado(idDado);
+	}
+	
+	public void atualizarDados(Dado[] dados) {
+		level.atualizarDados(dados);
+	}
+	
+	public boolean verificaSelecionado(int idDado) {
+		return level.verificaSelecionado(idDado);
+	}
+	
+	public int[] getValoresLivres() {
+		return level.getValoresLivres();
 	}
 }

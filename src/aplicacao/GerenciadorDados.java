@@ -3,6 +3,8 @@ package aplicacao;
 import java.util.LinkedList;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
+
 import modelo.Dado;
 
 public class GerenciadorDados {
@@ -35,23 +37,25 @@ public class GerenciadorDados {
 	public int[] rollDadosLivres() {
 		int[] valores = new int[numDadosLivres];
 		Random gerador = new Random();
+		int cont = 0;
 		for (int i = 0; i < dados.length; i++) {
 			if (!dados[i].isSetAside()) {
 				int valor = 1 + gerador.nextInt(6);
 				dados[i].setValor(valor);
-				valores[i] = valor;
+				valores[cont] = valor;
+				cont++;
 			}
 		}
 		return valores;
 	}
 
-	public int getNumDadosSetAside() {
-		return this.numDadosSetAside;
-	}
-
 	public void incrementarNumDeSetAsides(int numDadosSelecionados) {
 		numDadosSetAside += numDadosSelecionados;
 		numDadosLivres -= numDadosSelecionados;
+	}
+	
+	public int getNumDadosSetAside() {
+		return this.numDadosSetAside;
 	}
 
 	public int getNumDadosLivres() {
@@ -85,6 +89,38 @@ public class GerenciadorDados {
 
 	public boolean verificaSeHotDice() {
 		return this.numDadosLivres == 0;
+	}
+	
+	public void setDados(Dado[] dados) {
+		int numDadosLivres = 0;
+		int numDadosSetAside = 0;
+		
+		for (int i = 0; i < dados.length; i++) {
+			if (dados[i].isSetAside()) {
+				numDadosSetAside++;
+			} else {
+				numDadosLivres++;
+			}
+		}
+		
+		this.numDadosLivres = numDadosLivres;
+		this.numDadosSetAside = numDadosSetAside;
+		
+		this.dados = dados;
+	}
+	
+	public void alinharDados() {
+		Dado[] dadosClone = dados.clone();
+		
+		int cont = 0;
+		for (int i = 0; i < dados.length; i++) {
+			if (!dadosClone[i].isSetAside())
+				dados[cont++] = dadosClone[i];
+		}
+		for (int i = 0; i < dados.length; i++) {
+			if (dadosClone[i].isSetAside())
+				dados[cont++] = dadosClone[i];
+		}
 	}
 
 }

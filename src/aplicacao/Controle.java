@@ -1,5 +1,7 @@
 package aplicacao;
 
+import javax.swing.JOptionPane;
+
 import br.ufsc.inf.leobr.cliente.exception.ArquivoMultiplayerException;
 import br.ufsc.inf.leobr.cliente.exception.JahConectadoException;
 import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;
@@ -48,7 +50,7 @@ public class Controle {
 
 	public int[] clickRoll() {
 		int[] valores = mesaJogo.daVezDeuRoll().clone();
-		int farkledType = mesaJogo.VerificaFarkled(valores, meuID);
+		int farkledType = mesaJogo.VerificaFarkled(valores.clone(), meuID);
 		int tipo;
 		
 		if (farkledType == 0) {
@@ -71,11 +73,18 @@ public class Controle {
 					roundTotal = mesaJogo.getDescontoNoGrandTotal();
 				else
 					roundTotal = 0;
+				
+				if(mesaJogo.getGrandTotal(meuID) - roundTotal < 0)
+					roundTotal = 0;
+				
+				
 			((LanceRoundFinalizado)lance).setRoundTotalDoUltimoDaVez(roundTotal);
 			((LanceRoundFinalizado)lance).setFarkledType(farkledType);
+			idPlayerDaVez = lance.getIdPlayerDaVez();
 			}
 		}
 		rede.enviarJogada(lance);
+		
 		return valores;
 	}
 
@@ -100,6 +109,7 @@ public class Controle {
 			if (roundTotal > 0) {
 				deuBank = 1;
 				((LanceRoundFinalizado)lance).setRoundTotalDoUltimoDaVez(roundTotal);
+				idPlayerDaVez = lance.getIdPlayerDaVez();
 			} else {
 				deuBank = 2;
 				Jogador jogador = mesaJogo.getJogador(meuID);
@@ -114,7 +124,7 @@ public class Controle {
 	}
 
 	public void mudaJogadorDaVez() {
-		mesaJogo.liberarDados();
+		mesaJogo.liberarDados(false);
 	}
 
 	public String comecarPartida() {
@@ -155,14 +165,24 @@ public class Controle {
 		if (ultimoPlayerDaVez == -1)
 			ultimoPlayerDaVez = mesaJogo.numJogadores()-1;
 		
-		if (tipoLance == 0) {
+		switch(tipoLance) {
+		case 0:
 			int nivel = ((LanceVotarNivel)jogada).getLevelVoted();
 			mesaJogo.contabilizarVotoNivel(nivel);
-		} else {
-			if (tipoLance == 3) {
-				int roundTotal = ((LanceRoundFinalizado)jogada).getRoundTotalDoUltimoDaVez();
-				mesaJogo.atualizarGrandTotalDeUmPlayer(roundTotal, ultimoPlayerDaVez);
-			}
+			break;
+		case 1:
+			Dado[] dados = ((LanceRoll)jogada).getDados().clone();
+			mesaJogo.atualizarDados(dados);
+			break;
+		case 2:
+			int idDado = ((LanceDadoSelecionado)jogada).getIdDado();
+			mesaJogo.selecionarDado(idDado);
+			break;
+		case 3:
+			int roundTotal = ((LanceRoundFinalizado)jogada).getRoundTotalDoUltimoDaVez();
+			mesaJogo.atualizarGrandTotalDeUmPlayer(roundTotal, ultimoPlayerDaVez);
+			mesaJogo.liberarDados(this.verificarSeMinhaVez());
+			break;
 		}
 		return tipoLance;
 	}
@@ -172,7 +192,7 @@ public class Controle {
 	}
 
 	public void mudouVez() {
-		mesaJogo.liberarDados();
+		mesaJogo.liberarDados((idPlayerDaVez == meuID));
 	}
 
 	public boolean verificaSeFoiUltimo() {
@@ -183,7 +203,7 @@ public class Controle {
 	}
 
 	public int setAside(boolean veioDoRoll) {
-		return mesaJogo.setAside(meuID);
+		return mesaJogo.setAside(meuID, veioDoRoll);
 	}
 
 	public int getGrandTotal() {
@@ -200,6 +220,34 @@ public class Controle {
 	
 	public String[] getListaJogadores() {
 		return mesaJogo.pegarNomeJogadores();
+	}
+	
+	public int getNumDados() {
+		return mesaJogo.getNumDados();
+	}
+	
+	public int getValorDado(int idDado) {
+		return mesaJogo.getValorDado(idDado);
+	}
+			
+	public boolean verificaSelecionado(int idDado) {
+		return mesaJogo.verificaSelecionado(idDado);
+	}
+	
+	public int getNumJogadores() {
+		return mesaJogo.numJogadores();
+	}
+	
+	public int getRoundTotal() {
+		return mesaJogo.getRoundTotal(meuID);
+	}
+	
+	public String getNomeDaVez() {
+		return mesaJogo.getJogador(idPlayerDaVez).getNome();
+	}
+	
+	public int[] getValoresLivres() {
+		return mesaJogo.getValoresLivres();
 	}
 
 }

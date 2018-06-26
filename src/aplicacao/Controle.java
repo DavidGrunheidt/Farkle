@@ -1,7 +1,5 @@
 package aplicacao;
 
-import javax.swing.JOptionPane;
-
 import br.ufsc.inf.leobr.cliente.exception.ArquivoMultiplayerException;
 import br.ufsc.inf.leobr.cliente.exception.JahConectadoException;
 import br.ufsc.inf.leobr.cliente.exception.NaoConectadoException;

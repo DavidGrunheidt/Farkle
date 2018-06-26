@@ -1,8 +1,6 @@
 package factorys;
 
 
-import javax.swing.JOptionPane;
-
 import jogadas.Lance;
 import jogadas.LanceDadoSelecionado;
 import jogadas.LanceFinal;

@@ -3,8 +3,6 @@ package aplicacao;
 import java.util.LinkedList;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
-
 import modelo.Dado;
 
 public class GerenciadorDados {

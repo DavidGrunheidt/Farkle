@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -81,7 +80,6 @@ public class AtorJogador {
 	public void clickConectar() {
 		String nome = JOptionPane.showInputDialog("Informe seu nome");
 		String servidor = JOptionPane.showInputDialog("Informe o ip do servidor que deseja conectar");
-		////////////////////////
 		boolean conectar = false;
 		try {
 			conectar = controle.clickConectar(nome, servidor);
@@ -200,14 +198,8 @@ public class AtorJogador {
 					this.atualizarInterfaceGrafica(0);
 				} else {
 					JOptionPane.showMessageDialog(null, "Parabéns, você ganhou!", "Alerta!!", JOptionPane.ERROR_MESSAGE);
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
 					this.partidaFinalizada();
 					this.desabilitarInterfaceGraficaPartidaEmAndamento();
-					this.voltarInterfaceConectado();
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "Pontuacao minima não atingida para bank", "Alerta!!",
@@ -221,10 +213,8 @@ public class AtorJogador {
 	}
 
 	public void clickSairJogo() {
-		boolean confirmou = false;
-		/////////////////
-		if (confirmou)
-			controle.clickSairJogo();
+		controle.clickSairJogo();
+		janela.dispatchEvent(new WindowEvent(janela, WindowEvent.WINDOW_CLOSING));
 	}
 
 	public void habilitarInterfaceGraficaConectado() {
@@ -349,13 +339,7 @@ public class AtorJogador {
 			String name = ((LanceFinal) jogada).getWinnerName();
 			int points = ((LanceFinal) jogada).getPoints();
 			this.mostrarVencedor(name, points);
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			this.desabilitarInterfaceGraficaPartidaEmAndamento();
-			this.voltarInterfaceConectado();
 			break;
 		}
 	}
@@ -643,8 +627,7 @@ public class AtorJogador {
 		botaoSair.setBounds(22, 78, 205, 48);
 		botaoSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				controle.clickSairJogo();
-				janela.dispatchEvent(new WindowEvent(janela, WindowEvent.WINDOW_CLOSING));
+				clickSairJogo();
 			}
 		});
 		painelBotoes.add(botaoSair);
@@ -801,18 +784,18 @@ public class AtorJogador {
 
 		botaoAjuda.setBounds(10, 63, 117, 30);
 		painelOpcoesDurantePartida.add(botaoAjuda);
-		botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajuda2.png")));
+		botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajudaNew.png")));
 		botaoAjuda.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent arg0) {
 			}
 
 			public void mouseEntered(MouseEvent arg0) {
-				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajuda2Pressed.png")));
+				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajudaNewPressed.png")));
 			}
 
 			@Override
 			public void mouseExited(MouseEvent arg0) {
-				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajuda2.png")));
+				botaoAjuda.setIcon(new ImageIcon(getClass().getResource("/ajudaNew.png")));
 			}
 
 			public void mousePressed(MouseEvent arg0) {
@@ -876,7 +859,7 @@ public class AtorJogador {
 		botaoBank = new JButton();
 		botaoBank.setBounds(10, 118, 117, 30);
 		painelOpcoesDurantePartida.add(botaoBank);
-		botaoBank.setIcon(new ImageIcon(getClass().getResource("/Bank.png")));
+		botaoBank.setIcon(new ImageIcon(getClass().getResource("/bank.png")));
 		botaoBank.setOpaque(false);
 		botaoBank.setContentAreaFilled(false);
 		botaoBank.setBorderPainted(false);
